@@ -1,0 +1,40 @@
+@import "primeicons/primeicons.css";
+@import "tailwindcss";
+/* You can add global styles to this file, and also import other style files */
+html, body {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    --input-padding: 1rem 1.15rem;
+    --input-radius: 0.8rem;
+    --primary-color: #3b82f6;
+}
+
+.p-inputtext, .p-button, .p-select{
+    padding: var(--input-padding) !important;
+    border-radius: var(--input-radius) !important;
+    width: 100% !important;
+}
+
+.p-password{
+    width: 100% !important;
+}
+
+.p-password-toggle-mask-icon{
+    cursor:pointer !important;
+}
+
+.p-select-label{
+    padding: 0 !important;
+}
+
+.custom-spinner{
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+}
+  
