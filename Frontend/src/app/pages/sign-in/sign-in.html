@@ -1,1 +1,65 @@
-<p-button label="Check" />
+<app-on-boarding>
+    <div class="h-full w-12 lg:w-10 lg:border-round-3xl" style="background-color: white;">
+        <!-- Form Start -->
+        <form [formGroup]="signInForm" (ngSubmit)="onSubmit()"
+            class="h-full flex flex-column justify-content-center gap-4 p-4 md:p-6 lg:p-8">
+            <!-- Form Heading -->
+            <div class="w-full flex flex-column gap-2 mb-6">
+                <h2 class="text-800 text-5xl font-bold heading-text">
+                    Glad To See You Back
+                </h2>
+                <p class="text-primary-500 font-semibold text-xl lg:text-2xl">
+                    Enter your email and password to continue.
+                </p>
+            </div>
+            <!-- Forms Fields -->
+            <div class="w-full flex flex-column gap-5">
+                <div class="w-full flex flex-column gap-3">
+                    @if ( getFormControls['email'].touched && getFormControls['email'].invalid) {
+                    <small class="p-error">
+                        @if (getFormControls['email'].errors?.['required']) {
+                        <p-message severity="error" variant="simple" size="small">Email is required</p-message>
+                        }
+                        @if (getFormControls['email'].errors?.['email']) {
+                        <p-message severity="error" variant="simple" size="small">Enter a valid email.</p-message>
+                        }
+
+                    </small>
+                    }
+
+                    <label for="email">Email</label>
+                    <input pInputText id="email" aria-describedby="email-help" formControlName="email" />
+                </div>
+                <div class="w-full flex flex-column gap-3">
+                    @if (getFormControls['password'].touched &&
+                    getFormControls['password'].invalid) {
+                    <small class="p-error">
+                        @if (getFormControls['password'].errors?.['required']) {
+                        <p-message severity="error" variant="simple" size="small">Password is required</p-message>
+                        }
+                        @if (getFormControls['password'].errors?.['minlength']) {
+                        <p-message severity="error" variant="simple" size="small">Password must be of at Least 8
+                            characters.</p-message>
+                        }
+                    </small>
+                    }
+                    <label for="email">Password</label>
+                    <p-password id="password" [minlength]="8" autocomplete="off" formControlName="password"
+                        [toggleMask]="true" promptLabel="Choose a password" weakLabel="Too simple"
+                        mediumLabel="Average complexity" strongLabel="Complex password" />
+                    <div>
+                        <a href="forgotPassword" style="text-decoration: underline">Forgot Password?</a>
+                    </div>
+                </div>
+                <div class="w-full flex flex-column align-items-center gap-3">
+                    <p-button class="w-full" [disabled]="signInForm.invalid" type="submit" label="Sign In" />
+                    <p class="text-700 text-sm">
+                        Don't have an account yet?
+                        <a href="register" style="text-decoration: underline">Create an account</a>
+                    </p>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</app-on-boarding>

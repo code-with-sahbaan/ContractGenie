@@ -6,7 +6,7 @@ html, body {
     font-size: 14px;
     --input-padding: 1rem 1.15rem;
     --input-radius: 0.8rem;
-    --primary-color: #3b82f6;
+    --primary-color: #eab308;
 }
 
 .p-inputtext, .p-button, .p-select{

@@ -1,0 +1,31 @@
+.blur-container {
+    backdrop-filter: blur(25px) saturate(100%);
+    -webkit-backdrop-filter: blur(25px) saturate(100%);
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.typewriter h1 {
+  overflow: hidden;                  /* Hide text until revealed */
+  border-right: .15em solid orange;  /* Cursor */
+  white-space: normal;               /* ✅ Allow wrapping */
+  word-break: break-word;            /* ✅ Force long words to wrap if needed */
+  margin: 0 auto;
+  display: inline-block;             /* Needed for width animation */
+  font-size: clamp(1rem, 5vw, 2.5rem); /* Responsive font size */
+  animation: 
+    typing 3s steps(30, end),
+    blink-caret .5s step-end infinite;
+}
+
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% } /* 50 for sm - 90 for md+lg*/
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange }
+}

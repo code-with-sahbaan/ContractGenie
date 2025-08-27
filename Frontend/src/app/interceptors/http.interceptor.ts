@@ -39,9 +39,6 @@ export class HttpConfigInterceptor implements HttpInterceptor {
           // If token expires or never logged in
           if (error.status === 403) {
             logout();
-          } else {
-            // If got any error from API
-            console.error('HTTP error occurred:', error);
           }
         },
       })

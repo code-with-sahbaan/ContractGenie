@@ -1,1 +1,10 @@
+<!-- Spinner/Loader -->
+@if(uiService.isLoading){
+<div class="custom-spinner">
+    <p-progress-spinner ariaLabel="loading" />
+</div>
+}
+<!-- Toast/Message Bar -->
+<p-toast />
+<!-- Screens -->
 <router-outlet></router-outlet>
