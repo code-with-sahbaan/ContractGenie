@@ -13,10 +13,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { OnBoardingFooter } from '../../components/on-boarding-footer/on-boarding-footer';
+import { OnBoardingHeading } from '../../components/on-boarding-heading/on-boarding-heading';
+import { LogoView } from '../../components/logo-view/logo-view';
 
 @Component({
   selector: 'app-sign-in',
-  imports: [ButtonModule, OnBoarding, FormsModule, ReactiveFormsModule, Message, InputTextModule, PasswordModule],
+  imports: [ButtonModule, OnBoarding, FormsModule, ReactiveFormsModule, Message, InputTextModule, PasswordModule, OnBoardingFooter, OnBoardingHeading, LogoView],
   templateUrl: './sign-in.html',
   styleUrl: './sign-in.css'
 })

@@ -13,7 +13,7 @@
   display: inline-block;             /* Needed for width animation */
   font-size: clamp(1rem, 5vw, 2.5rem); /* Responsive font size */
   animation: 
-    typing 3s steps(30, end),
+    typing 1.5s steps(30, end),
     blink-caret .5s step-end infinite;
 }
 

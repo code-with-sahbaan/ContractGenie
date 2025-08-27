@@ -2,16 +2,11 @@
     <div class="h-full w-12 lg:w-10 lg:border-round-3xl" style="background-color: white;">
         <!-- Form Start -->
         <form [formGroup]="signInForm" (ngSubmit)="onSubmit()"
-            class="h-full flex flex-column justify-content-center gap-4 p-4 md:p-6 lg:p-8">
+            class="h-full flex flex-column justify-content-between p-8">
+            <!-- Logo -->
+            <app-logo-view/>
             <!-- Form Heading -->
-            <div class="w-full flex flex-column gap-2 mb-6">
-                <h2 class="text-800 text-5xl font-bold heading-text">
-                    Glad To See You Back
-                </h2>
-                <p class="text-primary-500 font-semibold text-xl lg:text-2xl">
-                    Enter your email and password to continue.
-                </p>
-            </div>
+            <app-on-boarding-heading/>
             <!-- Forms Fields -->
             <div class="w-full flex flex-column gap-5">
                 <div class="w-full flex flex-column gap-3">
@@ -59,7 +54,8 @@
                     </p>
                 </div>
             </div>
-
+            <!-- Terms and Conditions -->
+            <app-on-boarding-footer/>
         </form>
     </div>
 </app-on-boarding>
