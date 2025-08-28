@@ -8,5 +8,5 @@ export class OnBoardingService {
     
     public heading:string = 'Glad To See You Back';
     public subHeading:string = 'Enter your email and password to continue.';
-
+    public forgotPassword:boolean = false;
 }

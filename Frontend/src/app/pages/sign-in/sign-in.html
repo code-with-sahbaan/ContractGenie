@@ -43,7 +43,7 @@
                         [toggleMask]="true" promptLabel="Choose a password" weakLabel="Too simple"
                         mediumLabel="Average complexity" strongLabel="Complex password" />
                     <div>
-                        <a href="forgotPassword" style="text-decoration: underline">Forgot Password?</a>
+                        <p style="text-decoration: underline; cursor: pointer;" (click)="onBoardingService.forgotPassword = true">Forgot Password?</p>
                     </div>
                 </div>
                 <div class="w-full flex flex-column align-items-center gap-3">

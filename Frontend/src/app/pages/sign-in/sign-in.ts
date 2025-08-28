@@ -16,6 +16,7 @@ import {
 import { OnBoardingFooter } from '../../components/on-boarding-footer/on-boarding-footer';
 import { OnBoardingHeading } from '../../components/on-boarding-heading/on-boarding-heading';
 import { LogoView } from '../../components/logo-view/logo-view';
+import { OnBoardingService } from '../../services/onBoarding.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -32,6 +33,7 @@ export class SignIn {
     private fb: FormBuilder,
     private uiService: UiService,
     private router: Router,
+    public onBoardingService: OnBoardingService
   ) {
     this.signInForm = fb.group({
       email: ['', [Validators.required, Validators.email]],

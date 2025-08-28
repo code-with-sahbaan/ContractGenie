@@ -1,8 +1,10 @@
 <div class="min-h-screen"
     style="background-image: linear-gradient(-45deg, #35C3F3 0%, #8b9fe8 20%, #e681d8 39%, #ffa9a4 76%, #FED2CE 100%);">
-    <div id="blur-container" class="min-h-screen lg:h-screen w-full grid grid-nogutter blur-container lg:p-8 lg:overflow-hidden">
+    <div id="blur-container"
+        class="min-h-screen lg:h-screen w-full grid grid-nogutter blur-container lg:p-8 lg:overflow-hidden">
         <!-- Left Side -->
-        <div class="col-12 md:col-12 lg:col-6 h-screen lg:h-full grid grid-nogutter justify-content-center align-items-center">
+        <div
+            class="col-12 md:col-12 lg:col-6 h-screen lg:h-full grid grid-nogutter justify-content-center align-items-center">
             <ng-content></ng-content>
         </div>
         <!-- Right Side -->
@@ -13,7 +15,110 @@
                 </h1>
             </div>
             <div class="p-9 lg:p-0">
-                <span class="text-white font-bold">ContractGenie</span> is a web-based AI-powered contract assistant that transforms the way financial institutions manage and interact with contracts. It enables enterprises to upload, store, and analyze contracts, while offering an AI-driven chat interface capable of answering both contract-specific queries (via RAG) and general business questions (via general AI reasoning).</div>
+                <span class="text-white font-bold">ContractGenie</span> is a web-based AI-powered contract assistant
+                that transforms the way financial institutions manage and interact with contracts. It enables
+                enterprises to upload, store, and analyze contracts, while offering an AI-driven chat interface capable
+                of answering both contract-specific queries (via RAG) and general business questions (via general AI
+                reasoning).
+            </div>
         </div>
     </div>
+
+    <!-- Forgot Password Dialog -->
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Forgot Password" [modal]="true"
+        [(visible)]="onBoardingService.forgotPassword" [style]="{ width: '50rem' }">
+        <p-stepper #stepper [value]="1" class="basis-[50rem]" [linear]="true">
+            <p-step-list>
+                <p-step [value]="1">Enter Your Email</p-step>
+                <p-step [value]="2">Verify and Update Password</p-step>
+            </p-step-list>
+            <p-step-panels>
+                <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit(stepper)">
+                    <p-step-panel [value]="1">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <!-- Email -->
+                            <div class="w-full flex flex-column gap-3">
+                                @if ( getFormControls['email'].touched && getFormControls['email'].invalid) {
+                                <small class="p-error">
+                                    @if (getFormControls['email'].errors?.['required']) {
+                                    <p-message severity="error" variant="simple" size="small">Email is
+                                        required</p-message>
+                                    }
+                                    @if (getFormControls['email'].errors?.['email']) {
+                                    <p-message severity="error" variant="simple" size="small">Enter a valid
+                                        email.</p-message>
+                                    }
+
+                                </small>
+                                }
+
+                                <label for="email">Email</label>
+                                <input pInputText id="email" aria-describedby="email-help" formControlName="email" />
+                            </div>
+                            <div class="flex pt-6 justify-end">
+                                <p-button label="Verify and Update" icon="pi pi-arrow-right" iconPos="right"
+                                    [disabled]="getFormControls['email'].errors?.['required']"
+                                    (onClick)="activateCallback(2)" />
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+
+                    <p-step-panel [value]="2">
+                        <ng-template #content let-activateCallback="activateCallback">
+                            <div class="flex flex-col mb-4">
+                                <!-- OTP -->
+                                <div class="w-full flex flex-column gap-3">
+                                    @if (getFormControls['otp'].touched &&
+                                    getFormControls['otp'].invalid) {
+                                    <small class="p-error">
+                                        @if (getFormControls['otp'].errors?.['required']) {
+                                        <p-message severity="error" variant="simple" size="small">OTP is
+                                            required</p-message>
+                                        }
+                                        @if (getFormControls['otp'].errors?.['minlength']) {
+                                        <p-message severity="error" variant="simple" size="small">OTP must be of at
+                                            Least 6
+                                            characters.</p-message>
+                                        }
+                                    </small>
+                                    }
+                                    <label for="otp">OTP</label>
+                                    <input pInputText id="otp" [minlength]="6" autocomplete="off" formControlName="otp"
+                                        promptLabel="Enter OTP" />
+                                </div>
+                            </div>
+                            <!-- Password -->
+                            <div class="w-full flex flex-column gap-3">
+                                @if (getFormControls['password'].touched &&
+                                getFormControls['password'].invalid) {
+                                <small class="p-error">
+                                    @if (getFormControls['password'].errors?.['required']) {
+                                    <p-message severity="error" variant="simple" size="small">Password is
+                                        required</p-message>
+                                    }
+                                    @if (getFormControls['password'].errors?.['minlength']) {
+                                    <p-message severity="error" variant="simple" size="small">Password must be of at
+                                        Least 8
+                                        characters.</p-message>
+                                    }
+                                </small>
+                                }
+                                <label for="password">New Password</label>
+                                <p-password id="password" [minlength]="8" autocomplete="off" formControlName="password"
+                                    [toggleMask]="true" promptLabel="Choose a password" weakLabel="Too simple"
+                                    mediumLabel="Average complexity" strongLabel="Complex password" />
+                            </div>
+
+                            <div class="grid grid-nogutter gap-4 pt-6 justify-between">
+                                <p-button label="Change Email" severity="secondary" icon="pi pi-arrow-left"
+                                    (onClick)="activateCallback(1)" />
+                                <p-button label="Update Password" [disabled]="isSubmittable()" icon="pi pi-check"
+                                    iconPos="right" type="submit" />
+                            </div>
+                        </ng-template>
+                    </p-step-panel>
+                </form>
+            </p-step-panels>
+        </p-stepper>
+    </p-dialog>
 </div>
