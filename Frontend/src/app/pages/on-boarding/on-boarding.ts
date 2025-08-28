@@ -29,15 +29,6 @@ export class OnBoarding {
     return this.forgotPasswordForm?.controls;
   }
 
-  isSubmittable() {
-    return (
-      this.getFormControls['password'].errors?.['required'] ||
-      this.getFormControls['password'].errors?.['minlength'] ||
-      this.getFormControls['otp'].errors?.['required'] ||
-      this.getFormControls['otp'].errors?.['minlength']
-    )
-  }
-
   resetForgotPassword(stepper: any) {
     this.forgotPasswordForm.reset();
     alert('Submit');
