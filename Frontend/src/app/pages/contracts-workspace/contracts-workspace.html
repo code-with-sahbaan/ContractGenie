@@ -1,0 +1,41 @@
+<div class="grid grid-nogutter w-screen h-screen max-h-screen">
+
+    <!-- Folders -->
+    <div class="col-12 md:col-3 h-full p-6 flex flex-column gap-4">
+        <p-button class="w-full" label="Add Folder" icon="pi pi-folder" />
+        <p-button class="w-full" label="Add File" icon="pi pi-file" />
+        <br>
+        <div class="h-full flex flex-column gap-3 h-full overflow-auto">
+            <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
+            @for (fld of folders; track $index) {
+            <p-accordion value="{{activeFolderId}}">
+                <p-accordion-panel value="{{fld.folderId}}">
+                    <p-accordion-header (click)="activateFolder(fld.folderId)">
+                        <div class="flex align-items-center gap-3">
+                            {{fld.folderName}} <p-chip label="{{fld.contracts.length}} - Contracts" />
+                        </div>
+                    </p-accordion-header>
+                    <p-accordion-content>
+                        <div class="flex flex-column gap-2">
+                            @for (ctrs of fld.contracts; track $index) {
+                                <p-button class="w-full" (click)="activateContract(ctrs.contractId)" [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'" label="{{ctrs.contractName}}" />
+                            }
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            </p-accordion>
+            }
+        </div>
+    </div>
+
+    <!-- Main Contracts -->
+    <div class="col-12 md:col-6 h-full p-6 flex flex-column gap-4">
+        Hello
+    </div>
+
+    <!-- Contracts Insigt -->
+    <div class="col-12 md:col-3 h-full p-6 flex flex-column gap-4">
+        Hello
+    </div>
+
+</div>
