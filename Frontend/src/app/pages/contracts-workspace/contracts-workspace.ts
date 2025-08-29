@@ -5,10 +5,11 @@ import { AccordionModule } from 'primeng/accordion';
 import { Chip } from 'primeng/chip';
 import { TabList, TabsModule } from 'primeng/tabs';
 import { DrawerModule } from 'primeng/drawer';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule, DrawerModule],
+  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule, DrawerModule, FormsModule],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
@@ -17,10 +18,11 @@ export class ContractsWorkspace {
   @ViewChild('tablistRef') tabList!: TabList;
   activeContractId: number = 0;
   activeFolderId: number = 0;
-  selectedContracts: Set<any> = new Set();
+  selectedContracts: Map<number, any> = new Map<number, any>();
   isDesktop = true;
   visibleContract = false;
-
+  query: string = "";
+  queryList: string[] = [];
 
   @HostListener('window:resize')
   onResize() {
@@ -33,15 +35,18 @@ export class ContractsWorkspace {
       contracts: [
         {
           contractId: 1,
-          contractName: 'Malaysian University'
+          contractName: 'Malaysian University',
+          folderId: 1
         },
         {
           contractId: 2,
-          contractName: 'Indonesian University'
+          contractName: 'Indonesian University',
+          folderId: 1
         },
         {
           contractId: 3,
-          contractName: 'Singaporian University'
+          contractName: 'Singaporian University',
+          folderId: 1
         }
       ]
     },
@@ -51,29 +56,32 @@ export class ContractsWorkspace {
       contracts: [
         {
           contractId: 4,
-          contractName: 'German University'
+          contractName: 'German University',
+          folderId: 2
         },
         {
           contractId: 5,
-          contractName: 'Italian University'
+          contractName: 'Italian University',
+          folderId: 2
         },
         {
           contractId: 6,
-          contractName: 'Ethopian University'
+          contractName: 'Ethopian University',
+          folderId: 2
         }
       ]
     },
   ]
 
   activateContract(contract: any) {
-    this.selectedContracts.add(contract);
+    this.selectedContracts.set(contract.contractId, contract);
     this.activeContractId = contract.contractId;
     this.tabList.updateButtonState();
     this.visibleContract = false;
   }
 
   removeContract(contract: any) {
-    this.selectedContracts.delete(contract);
+    this.selectedContracts.delete(contract.contractId);
     setTimeout(() => (this.activeContractId = 0), 0);
     this.tabList.updateButtonState();
   }
@@ -84,6 +92,8 @@ export class ContractsWorkspace {
 
   tabChange(index: any) {
     this.activeContractId = index;
+    const contract = this.selectedContracts.get(Number(index));
+    this.activeFolderId = contract.folderId;
   }
 
   checkScreenSize() {
@@ -92,5 +102,25 @@ export class ContractsWorkspace {
 
   toggleDrawer() {
     this.visibleContract = !this.visibleContract;
+  }
+
+  submitQuery() {
+    const temp = this.queryList;
+    this.queryList.push(this.query);
+    this.queryList = [...temp];
+    this.query = "";
+  }
+
+  keyDown(event: KeyboardEvent) {
+    if (event.key == 'Enter') {
+      this.submitQuery();
+    }
+  }
+
+  getContractInsights() {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'   // or 'auto'
+    });
   }
 }

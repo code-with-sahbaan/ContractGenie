@@ -1,13 +1,13 @@
-<main class="grid grid-nogutter w-screen h-screen max-h-screen">
+<main class="grid grid-nogutter h-screen">
 
     <!-- Folders -->
     @if (isDesktop) {
-    <section class="col-12 md:col-3 h-full p-6 flex flex-column gap-4">
+    <section class="col-3 h-full p-6 flex flex-column gap-4">
         <p-button class="w-full" label="Add Folder" icon="pi pi-folder" />
         <p-button class="w-full" label="Add File" icon="pi pi-file" />
         <br>
-        <div class="h-full flex flex-column gap-3 h-full overflow-auto">
-            <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
+        <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
+        <div class="h-full flex flex-column gap-3 h-full overflow-auto justify-content-end">
             @for (fld of folders; track $index) {
             <p-accordion value="{{activeFolderId}}">
                 <p-accordion-panel value="{{fld.folderId}}">
@@ -45,7 +45,8 @@
                         <p-accordion-panel value="{{fld.folderId}}">
                             <p-accordion-header (click)="activateFolder(fld.folderId)">
                                 <div class="flex flex-column gap-3">
-                                    {{fld.folderName}} <p-chip class="w-full flex justify-content-center" label="{{fld.contracts.length}} - Contracts" />
+                                    {{fld.folderName}} <p-chip class="w-full flex justify-content-center"
+                                        label="{{fld.contracts.length}} - Contracts" />
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
@@ -64,18 +65,22 @@
             </section>
         </ng-template>
     </p-drawer>
-    <div class="p-4">
-        <p-button variant="text" (click)="toggleDrawer()">Contracts</p-button>
-    </div>
     }
 
 
     <!-- Main Contracts -->
-    <section class="col-12 xl:col-6 h-full p-6 flex flex-column gap-4">
-        <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)" scrollable="">
-            <p-tablist #tablistRef>
+    <section class="col-12 xl:col-6 h-full p-6">
+        <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)" scrollable
+            class="h-full flex flex-column justify-content-between">
+            @if (!isDesktop) {
+            <div class="flex mb-6 justify-content-between">
+                <p-button variant="text" (click)="toggleDrawer()">Contracts</p-button>
+                <p-button variant="text" (click)="getContractInsights()">Contract Insights</p-button>
+            </div>
+            }
+            <p-tablist #tablistRef [style]="{ height: '6%' }">
                 <p-tab value="0">AI Expert</p-tab>
-                @for (selCtrs of selectedContracts; track selCtrs.contractId) {
+                @for (selCtrs of selectedContracts.values(); track selCtrs.contractId) {
                 <p-tab value="{{selCtrs.contractId}}" class="grid grid-nogutter" style="position: relative;">
                     <p class="pr-6">{{selCtrs.contractName}}</p>
                     <div style="position: absolute; top: 0; right: 0;z-index: 100;">
@@ -85,27 +90,41 @@
                 }
             </p-tablist>
 
-            <p-tabpanels>
+            <p-tabpanels [style]="{ height: '90%' }">
                 <p-tabpanel value="0">
-                    <p class="m-0">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                        labore et
-                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                        aliquip ex
-                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                        dolore eu fugiat
-                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                        deserunt mollit
-                        anim id est laborum.
-                    </p>
+                    <div class="h-full flex flex-column justify-content-end w-full">
+                        @if (queryList.length > 0) {
+                            <div style="height: 90%;">
+                                @for (item of queryList; track $index) {
+                                <p>{{item}}</p>
+                                }
+                            </div>
+                        }@else {
+                            <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
+                        }
+
+                        <div class="flex gap-2">
+                            <input pInputText id="email" aria-describedby="email-help" [(ngModel)]="query"
+                                placeholder="Ask Anything" (keydown)="keyDown($event)" />
+                            <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
+                                [disabled]="query.length == 0" (click)="submitQuery()" />
+                        </div>
+                    </div>
                 </p-tabpanel>
             </p-tabpanels>
         </p-tabs>
     </section>
 
     <!-- Contracts Insigt -->
-    <section class="col-12 md:col-3 h-full p-6 flex flex-column gap-4">
-        Hello
+    <section class="col-12 xl:col-3 h-full p-6 flex flex-column gap-4 justify-content-between">
+        <h1 class="text-3xl font-bold text-primary">Contract Insights</h1>
+        <div class="bg-primary-50 p-4 border-round-xl h-full">
+            @if (activeContractId == 0) {
+            <p class="font-italic text-primary">Please Select Contract to see it's insights</p>
+            }@else {
+
+            }
+        </div>
     </section>
 
 </main>

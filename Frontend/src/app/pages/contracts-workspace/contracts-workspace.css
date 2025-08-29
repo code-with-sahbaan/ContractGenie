@@ -9,7 +9,10 @@
 }
 
 :host ::ng-deep .p-tab-active{
-    border: none;
     background-color: var(--primary-color);
     color: white;
+}
+
+:host ::ng-deep .p-tablist-active-bar{
+    background: none;
 }
