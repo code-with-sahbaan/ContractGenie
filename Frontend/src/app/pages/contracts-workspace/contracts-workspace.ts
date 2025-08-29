@@ -3,10 +3,11 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AccordionModule } from 'primeng/accordion';
 import { Chip } from 'primeng/chip';
+import { TabsModule } from 'primeng/tabs';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, Chip],
+  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
@@ -59,5 +60,9 @@ export class ContractsWorkspace {
 
   activateFolder(folderId:number){
     this.activeFolderId = folderId;
+  }
+
+  tabChange(index: any){
+    this.activeContractId = index;
   }
 }

@@ -18,7 +18,9 @@
                     <p-accordion-content>
                         <div class="flex flex-column gap-2">
                             @for (ctrs of fld.contracts; track $index) {
-                                <p-button class="w-full" (click)="activateContract(ctrs.contractId)" [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'" label="{{ctrs.contractName}}" />
+                            <p-button class="w-full" (click)="activateContract(ctrs.contractId)"
+                                [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
+                                label="{{ctrs.contractName}}" />
                             }
                         </div>
                     </p-accordion-content>
@@ -30,7 +32,26 @@
 
     <!-- Main Contracts -->
     <section class="col-12 md:col-6 h-full p-6 flex flex-column gap-4">
-        Hello
+        <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)">
+            <p-tablist>
+                <p-tab value="0">AI Expert</p-tab>
+            </p-tablist>
+            <p-tabpanels>
+                <p-tabpanel value="0">
+                    <p class="m-0">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                        labore et
+                        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                        aliquip ex
+                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                        dolore eu fugiat
+                        nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                        deserunt mollit
+                        anim id est laborum.
+                    </p>
+                </p-tabpanel>
+            </p-tabpanels>
+        </p-tabs>
     </section>
 
     <!-- Contracts Insigt -->

@@ -1,0 +1,14 @@
+:host ::ng-deep .p-tab{
+    background-color: #f1f5f9;
+    border-radius: var(--input-radius);
+}
+
+:host ::ng-deep .p-tablist-tab-list{
+    border: none;
+}
+
+:host ::ng-deep .p-tab-active{
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+}
