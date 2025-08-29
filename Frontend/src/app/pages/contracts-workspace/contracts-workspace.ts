@@ -1,20 +1,31 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AccordionModule } from 'primeng/accordion';
 import { Chip } from 'primeng/chip';
-import { TabsModule } from 'primeng/tabs';
+import { TabList, TabsModule } from 'primeng/tabs';
+import { DrawerModule } from 'primeng/drawer';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule],
+  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule, DrawerModule],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
 export class ContractsWorkspace {
 
-  activeContractId: number = 1;
-  activeFolderId: number = 1;
+  @ViewChild('tablistRef') tabList!: TabList;
+  activeContractId: number = 0;
+  activeFolderId: number = 0;
+  selectedContracts: Set<any> = new Set();
+  isDesktop = true;
+  visibleContract = false;
+
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
   folders: any[] = [
     {
       folderId: 1,
@@ -54,15 +65,32 @@ export class ContractsWorkspace {
     },
   ]
 
-  activateContract(contractId:number){
-    this.activeContractId = contractId;
+  activateContract(contract: any) {
+    this.selectedContracts.add(contract);
+    this.activeContractId = contract.contractId;
+    this.tabList.updateButtonState();
+    this.visibleContract = false;
   }
 
-  activateFolder(folderId:number){
+  removeContract(contract: any) {
+    this.selectedContracts.delete(contract);
+    setTimeout(() => (this.activeContractId = 0), 0);
+    this.tabList.updateButtonState();
+  }
+
+  activateFolder(folderId: number) {
     this.activeFolderId = folderId;
   }
 
-  tabChange(index: any){
+  tabChange(index: any) {
     this.activeContractId = index;
+  }
+
+  checkScreenSize() {
+    this.isDesktop = window.innerWidth >= 1200;
+  }
+
+  toggleDrawer() {
+    this.visibleContract = !this.visibleContract;
   }
 }

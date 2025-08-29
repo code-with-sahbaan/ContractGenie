@@ -1,6 +1,7 @@
 <main class="grid grid-nogutter w-screen h-screen max-h-screen">
 
     <!-- Folders -->
+    @if (isDesktop) {
     <section class="col-12 md:col-3 h-full p-6 flex flex-column gap-4">
         <p-button class="w-full" label="Add Folder" icon="pi pi-folder" />
         <p-button class="w-full" label="Add File" icon="pi pi-file" />
@@ -18,7 +19,7 @@
                     <p-accordion-content>
                         <div class="flex flex-column gap-2">
                             @for (ctrs of fld.contracts; track $index) {
-                            <p-button class="w-full" (click)="activateContract(ctrs.contractId)"
+                            <p-button class="w-full" (click)="activateContract(ctrs)"
                                 [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
                                 label="{{ctrs.contractName}}" />
                             }
@@ -29,13 +30,61 @@
             }
         </div>
     </section>
+    } @else {
+    <p-drawer #drawerRef [(visible)]="visibleContract" [dismissible]="!isDesktop" [closeOnEscape]="!isDesktop"
+        [modal]="!isDesktop" position="left" [style]="{ width: '80%' }" [blockScroll]="!isDesktop">
+        <ng-template #headless>
+            <section class="w-full h-full p-6 flex flex-column gap-4">
+                <p-button class="w-full" label="Add Folder" icon="pi pi-folder" />
+                <p-button class="w-full" label="Add File" icon="pi pi-file" />
+                <br>
+                <div class="h-full flex flex-column gap-3 h-full overflow-auto">
+                    <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
+                    @for (fld of folders; track $index) {
+                    <p-accordion value="{{activeFolderId}}">
+                        <p-accordion-panel value="{{fld.folderId}}">
+                            <p-accordion-header (click)="activateFolder(fld.folderId)">
+                                <div class="flex flex-column gap-3">
+                                    {{fld.folderName}} <p-chip class="w-full flex justify-content-center" label="{{fld.contracts.length}} - Contracts" />
+                                </div>
+                            </p-accordion-header>
+                            <p-accordion-content>
+                                <div class="flex flex-column gap-2">
+                                    @for (ctrs of fld.contracts; track $index) {
+                                    <p-button class="w-full" (click)="activateContract(ctrs)"
+                                        [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
+                                        label="{{ctrs.contractName}}" />
+                                    }
+                                </div>
+                            </p-accordion-content>
+                        </p-accordion-panel>
+                    </p-accordion>
+                    }
+                </div>
+            </section>
+        </ng-template>
+    </p-drawer>
+    <div class="p-4">
+        <p-button variant="text" (click)="toggleDrawer()">Contracts</p-button>
+    </div>
+    }
+
 
     <!-- Main Contracts -->
-    <section class="col-12 md:col-6 h-full p-6 flex flex-column gap-4">
-        <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)">
-            <p-tablist>
+    <section class="col-12 xl:col-6 h-full p-6 flex flex-column gap-4">
+        <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)" scrollable="">
+            <p-tablist #tablistRef>
                 <p-tab value="0">AI Expert</p-tab>
+                @for (selCtrs of selectedContracts; track selCtrs.contractId) {
+                <p-tab value="{{selCtrs.contractId}}" class="grid grid-nogutter" style="position: relative;">
+                    <p class="pr-6">{{selCtrs.contractName}}</p>
+                    <div style="position: absolute; top: 0; right: 0;z-index: 100;">
+                        <p-button (click)="removeContract(selCtrs)" icon="pi pi-times" size="small" class="w-1" />
+                    </div>
+                </p-tab>
+                }
             </p-tablist>
+
             <p-tabpanels>
                 <p-tabpanel value="0">
                     <p class="m-0">
