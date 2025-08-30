@@ -4,9 +4,9 @@
         <form [formGroup]="signInForm" (ngSubmit)="onSubmit()"
             class="h-full flex flex-column justify-content-between p-5 xl:p-8">
             <!-- Logo -->
-            <app-logo-view/>
+            <app-logo-view />
             <!-- Form Heading -->
-            <app-on-boarding-heading/>
+            <app-on-boarding-heading />
             <!-- Forms Fields -->
             <div class="w-full flex flex-column gap-5">
                 <div class="w-full flex flex-column gap-3">
@@ -43,7 +43,8 @@
                         [toggleMask]="true" promptLabel="Choose a password" weakLabel="Too simple"
                         mediumLabel="Average complexity" strongLabel="Complex password" />
                     <div>
-                        <p style="text-decoration: underline; cursor: pointer;" (click)="onBoardingService.forgotPassword = true">Forgot Password?</p>
+                        <p style="text-decoration: underline; cursor: pointer;"
+                            (click)="onBoardingService.forgotPassword = true">Forgot Password?</p>
                     </div>
                 </div>
                 <div class="w-full flex flex-column align-items-center gap-3">
@@ -55,7 +56,37 @@
                 </div>
             </div>
             <!-- Terms and Conditions -->
-            <app-on-boarding-footer/>
+            <app-on-boarding-footer />
         </form>
+
+        <!-- Verify Profile Dialog -->
+        <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Profile Verification for {{signInForm.get('email')?.value}}" [modal]="true"
+            [(visible)]="verifyProfileVisible" [style]="{ width: '50rem' }">
+            <form [formGroup]="verifyProfileForm" (ngSubmit)="verifyProfile()">
+                <!-- OTP -->
+                <div class="w-full flex flex-column gap-3 mb-3">
+                    @if (getVerifyFormControls['otp'].touched &&
+                    getVerifyFormControls['otp'].invalid) {
+                    <small class="p-error">
+                        @if (getVerifyFormControls['otp'].errors?.['required']) {
+                        <p-message severity="error" variant="simple" size="small">OTP is
+                            required</p-message>
+                        }
+                        @if (getVerifyFormControls['otp'].errors?.['minlength']) {
+                        <p-message severity="error" variant="simple" size="small">OTP must be of at
+                            Least 6
+                            characters.</p-message>
+                        }
+                    </small>
+                    }
+                    <label for="otp">OTP</label>
+                    <input pInputText id="otp" [minlength]="5" autocomplete="off" formControlName="otp"
+                        promptLabel="Enter OTP" />
+                </div>
+
+                <p-button label="Verify Profile" [disabled]="verifyProfileForm.invalid" icon="pi pi-check"
+                    iconPos="right" type="submit" />
+            </form>
+        </p-dialog>
     </main>
 </app-on-boarding>
