@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Table(name = "USERS")
 @Entity
 @Getter
@@ -34,5 +37,7 @@ public class Users {
     @Column(name = "IS_ACTIVE")
     private Boolean isActive = false;
 
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private List<Folder> folders = new ArrayList<>();
 
 }

@@ -59,34 +59,5 @@
             <app-on-boarding-footer />
         </form>
 
-        <!-- Verify Profile Dialog -->
-        <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Profile Verification for {{signInForm.get('email')?.value}}" [modal]="true"
-            [(visible)]="verifyProfileVisible" [style]="{ width: '50rem' }">
-            <form [formGroup]="verifyProfileForm" (ngSubmit)="verifyProfile()">
-                <!-- OTP -->
-                <div class="w-full flex flex-column gap-3 mb-3">
-                    @if (getVerifyFormControls['otp'].touched &&
-                    getVerifyFormControls['otp'].invalid) {
-                    <small class="p-error">
-                        @if (getVerifyFormControls['otp'].errors?.['required']) {
-                        <p-message severity="error" variant="simple" size="small">OTP is
-                            required</p-message>
-                        }
-                        @if (getVerifyFormControls['otp'].errors?.['minlength']) {
-                        <p-message severity="error" variant="simple" size="small">OTP must be of at
-                            Least 6
-                            characters.</p-message>
-                        }
-                    </small>
-                    }
-                    <label for="otp">OTP</label>
-                    <input pInputText id="otp" [minlength]="5" autocomplete="off" formControlName="otp"
-                        promptLabel="Enter OTP" />
-                </div>
-
-                <p-button label="Verify Profile" [disabled]="verifyProfileForm.invalid" icon="pi pi-check"
-                    iconPos="right" type="submit" />
-            </form>
-        </p-dialog>
     </main>
 </app-on-boarding>

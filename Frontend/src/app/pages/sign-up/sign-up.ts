@@ -16,7 +16,8 @@ import {
 import { OnBoardingFooter } from '../../components/on-boarding-footer/on-boarding-footer';
 import { OnBoardingHeading } from '../../components/on-boarding-heading/on-boarding-heading';
 import { LogoView } from '../../components/logo-view/logo-view';
-import { OnBoardingService } from '../../services/onBoarding.service';
+import { OnBoardingService, SignUpRequest } from '../../services/onBoarding.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-sign-up',
@@ -54,5 +55,37 @@ export class SignUp implements OnInit {
       this.signUpForm.markAllAsTouched();
       return;
     }
+
+    /**
+         * Showing Loader
+         */
+    this.uiService.showSpinner();
+    /**
+     * Calling API
+     */
+    const payload: SignUpRequest = {
+      email: this.signUpForm.get('email')?.value,
+      password: this.signUpForm.get('password')?.value,
+      fullName: this.signUpForm.get('fullName')?.value
+    }
+    this.onBoardingService
+      .signUp(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uiService.showSuccess(response.responseMessage);
+          this.router.navigate(['']);
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
   }
 }

@@ -2,14 +2,14 @@ import { Component, HostListener, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { AccordionModule } from 'primeng/accordion';
-import { Chip } from 'primeng/chip';
 import { TabList, TabsModule } from 'primeng/tabs';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule } from '@angular/forms';
+import { Dialog } from 'primeng/dialog';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, Chip, TabsModule, DrawerModule, FormsModule],
+  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
@@ -23,6 +23,8 @@ export class ContractsWorkspace {
   visibleContract = false;
   query: string = "";
   queryList: string[] = [];
+  addFolderModal: boolean = false;
+  folderName: string = '';
 
   @HostListener('window:resize')
   onResize() {

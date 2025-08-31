@@ -4,6 +4,7 @@ import code.with.sahbaan.contractgenie.RequestDTO.ForgotPassword;
 import code.with.sahbaan.contractgenie.RequestDTO.SignupRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.VerifyOtpRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
+import code.with.sahbaan.contractgenie.Services.FolderService;
 import code.with.sahbaan.contractgenie.Services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FolderService folderService;
 
     @PostMapping("v1/signup")
     public ResponseEntity<BaseResponse<?>> signup(@RequestBody SignupRequest signupRequest) throws Exception {
@@ -42,5 +46,11 @@ public class UserController {
         userService.forgotPassword(forgotPassword);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    /*
+    * ABOVE THIS LINE EVERY REQUEST IS NON_TOKENIZED. ALWAYS ADD NON_TOKENIZED REQUEST ABOVE THIS.
+    * */
+
+
 
 }

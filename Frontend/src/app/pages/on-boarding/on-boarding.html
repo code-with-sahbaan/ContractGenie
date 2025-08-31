@@ -33,6 +33,13 @@
                 <p-step [value]="2">Verify and Update Password</p-step>
             </p-step-list>
             <p-step-panels>
+                @if(isLoading){
+                <p-skeleton class="mb-2" />
+                <p-skeleton width="10rem" class="mb-2" />
+                <p-skeleton width="5rem" class="mb-2" />
+                <p-skeleton height="2rem" class="mb-2" />
+                <p-skeleton width="10rem" height="4rem" />
+                }@else {
                 <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit(stepper)">
                     <p-step-panel [value]="1">
                         <ng-template #content let-activateCallback="activateCallback">
@@ -58,7 +65,7 @@
                             <div class="flex pt-6 justify-end">
                                 <p-button label="Verify and Update" icon="pi pi-arrow-right" iconPos="right"
                                     [disabled]="getFormControls['email'].errors?.['required']"
-                                    (onClick)="activateCallback(2)" />
+                                    (onClick)="sendOTP(activateCallback)" />
                             </div>
                         </ng-template>
                     </p-step-panel>
@@ -77,13 +84,13 @@
                                         }
                                         @if (getFormControls['otp'].errors?.['minlength']) {
                                         <p-message severity="error" variant="simple" size="small">OTP must be of at
-                                            Least 6
+                                            Least 5
                                             characters.</p-message>
                                         }
                                     </small>
                                     }
                                     <label for="otp">OTP</label>
-                                    <input pInputText id="otp" [minlength]="6" autocomplete="off" formControlName="otp"
+                                    <input pInputText id="otp" [minlength]="5" autocomplete="off" formControlName="otp"
                                         promptLabel="Enter OTP" />
                                 </div>
                             </div>
@@ -112,13 +119,45 @@
                             <div class="grid grid-nogutter gap-4 pt-6 justify-between">
                                 <p-button label="Change Email" severity="secondary" icon="pi pi-arrow-left"
                                     (onClick)="activateCallback(1)" />
-                                <p-button label="Update Password" [disabled]="forgotPasswordForm.invalid" icon="pi pi-check"
-                                    iconPos="right" type="submit" />
+                                <p-button label="Update Password" [disabled]="forgotPasswordForm.invalid"
+                                    icon="pi pi-check" iconPos="right" type="submit" />
                             </div>
                         </ng-template>
                     </p-step-panel>
                 </form>
+                }
+
             </p-step-panels>
         </p-stepper>
     </p-dialog>
+
+    <!-- Verify Profile Dialog -->
+        <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Profile Verification for {{onBoardingService.email}}" [modal]="true"
+            [(visible)]="onBoardingService.verifyProfileModal" [style]="{ width: '50rem' }">
+            <form [formGroup]="verifyProfileForm" (ngSubmit)="verifyProfile()">
+                <!-- OTP -->
+                <div class="w-full flex flex-column gap-3 mb-3">
+                    @if (getVerifyFormControls['otp'].touched &&
+                    getVerifyFormControls['otp'].invalid) {
+                    <small class="p-error">
+                        @if (getVerifyFormControls['otp'].errors?.['required']) {
+                        <p-message severity="error" variant="simple" size="small">OTP is
+                            required</p-message>
+                        }
+                        @if (getVerifyFormControls['otp'].errors?.['minlength']) {
+                        <p-message severity="error" variant="simple" size="small">OTP must be of at
+                            Least 6
+                            characters.</p-message>
+                        }
+                    </small>
+                    }
+                    <label for="otp">OTP</label>
+                    <input pInputText id="otp" [minlength]="5" autocomplete="off" formControlName="otp"
+                        promptLabel="Enter OTP" />
+                </div>
+
+                <p-button label="Verify Profile" [disabled]="verifyProfileForm.invalid" icon="pi pi-check"
+                    iconPos="right" type="submit" />
+            </form>
+        </p-dialog>
 </main>

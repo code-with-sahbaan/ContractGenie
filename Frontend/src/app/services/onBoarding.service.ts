@@ -8,11 +8,21 @@ export interface SignInRequest {
   password: string
 }
 
+export interface SignUpRequest {
+  email: string,
+  password: string,
+  fullName: string
+}
+
 export interface VerifyOTPRequest {
   email: string,
   otp: string,
   verificationType: string,
   password: string
+}
+
+export interface ForgotPassword {
+  email: string
 }
 
 @Injectable({
@@ -25,12 +35,22 @@ export class OnBoardingService {
   public heading: string = 'Glad To See You Back';
   public subHeading: string = 'Enter your email and password to continue.';
   public forgotPassword: boolean = false;
+  public verifyProfileModal: boolean = false;
+  public email: string = '';
 
   signIn(payload: SignInRequest): Observable<any> {
     return this.http.post('/user/login', payload).pipe();
   }
 
+  signUp(payload: SignUpRequest): Observable<any> {
+    return this.http.post('/user/v1/signup', payload).pipe();
+  }
+
   verifyOtp(payload: VerifyOTPRequest): Observable<any> {
     return this.http.post('/user/v1/verifyOtp', payload).pipe();
+  }
+
+  sendForgotPasswordOtp(payload: ForgotPassword): Observable<any> {
+    return this.http.post('/user/v1/forgotPassword', payload).pipe();
   }
 }

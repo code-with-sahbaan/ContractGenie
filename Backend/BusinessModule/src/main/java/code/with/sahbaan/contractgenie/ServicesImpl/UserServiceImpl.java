@@ -84,8 +84,6 @@ public class UserServiceImpl extends GenericServiceImpl<Users> implements UserDe
             Users users = convertDtoToEntity(signupRequest);
             users.setPassword(new BCryptPasswordEncoder().encode(signupRequest.getPassword()));
             Users savedUser = userRepository.save(users);
-            /* Sending OTP via Email */
-            sendOTP(savedUser);
             return new BaseResponse<>("Account Created Successfully", null);
         } catch (Exception e) {
             throw new Exception("Failed to Signup");
@@ -119,10 +117,16 @@ public class UserServiceImpl extends GenericServiceImpl<Users> implements UserDe
 
     @Override
     public void forgotPassword(ForgotPassword forgotPassword) throws Exception {
+        Users users;
         try{
-            sendForgotPasswordOTP(getUserByEmail(forgotPassword.getEmail()).get());
+            users = getUserByEmail(forgotPassword.getEmail()).get();
+        }catch (Exception e){
+            throw new Exception("No User exists with this email");
+        }
+        try{
+            sendForgotPasswordOTP(users);
         } catch (Exception e) {
-            throw new Exception("failed to reset password");
+            throw new Exception("failed to Send OTP");
         }
     }
 
