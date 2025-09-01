@@ -31,15 +31,13 @@ public class FolderController {
     @PostMapping("v1/updateFolder")
     public ResponseEntity<?> updateFolder(@RequestBody UpdateFolderRequest updateFolderRequest) throws Exception {
         log.info("Executing updateFolder in FolderController");
-        folderService.updateFolder(updateFolderRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(folderService.updateFolder(updateFolderRequest), HttpStatus.OK);
     }
 
     @PostMapping("v1/addFolder")
-    public ResponseEntity<?> addFolder(@RequestBody AddFolderRequest addFolderRequest) throws Exception {
+    public ResponseEntity<BaseResponse<List<GetFolderResponse>>> addFolder(@RequestBody AddFolderRequest addFolderRequest) throws Exception {
         log.info("Executing addFolder in FolderController");
-        folderService.addFolder(addFolderRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(folderService.addFolder(addFolderRequest), HttpStatus.OK);
     }
 
 }

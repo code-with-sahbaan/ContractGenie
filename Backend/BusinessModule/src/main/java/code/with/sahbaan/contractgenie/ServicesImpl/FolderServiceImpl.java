@@ -41,11 +41,12 @@ public class FolderServiceImpl extends GenericServiceImpl<Folder> implements Fol
     }
 
     @Override
-    public void updateFolder(UpdateFolderRequest updateFolderRequest) throws Exception {
+    public BaseResponse<List<GetFolderResponse>> updateFolder(UpdateFolderRequest updateFolderRequest) throws Exception {
         try{
             Folder folder = folderRepository.findById(updateFolderRequest.getId()).get();
             BeanUtils.copyProperties(updateFolderRequest,folder);
             folderRepository.save(folder);
+            return getAllFolders();
         }catch (Exception e){
             throw new Exception("Failed to update folder");
         }

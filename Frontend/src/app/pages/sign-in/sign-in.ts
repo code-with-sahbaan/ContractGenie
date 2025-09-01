@@ -94,6 +94,7 @@ export class SignIn {
             this.onBoardingService.verifyProfileModal = true;
           } else {
             localStorage.setItem("USER", JSON.stringify(user));
+            this.router.navigate(['contractWorkspace']);
           }
         },
         error: (error) => {

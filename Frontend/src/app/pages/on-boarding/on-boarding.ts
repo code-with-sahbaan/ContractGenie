@@ -10,6 +10,7 @@ import { PasswordModule } from 'primeng/password';
 import { finalize } from 'rxjs';
 import { UiService } from '../../services/ui.service';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-on-boarding',
@@ -23,7 +24,7 @@ export class OnBoarding {
   isLoading: boolean = false;
   verifyProfileForm: FormGroup;
 
-  constructor(public onBoardingService: OnBoardingService, public formBuilder: FormBuilder, public uiService: UiService) {
+  constructor(public onBoardingService: OnBoardingService, public formBuilder: FormBuilder, public uiService: UiService, public router: Router) {
     this.forgotPasswordForm = formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -142,6 +143,7 @@ export class OnBoarding {
           // Showing success Toast
           this.uiService.showSuccess("OTP verified successfully");
           this.onBoardingService.verifyProfileModal = false;
+          this.router.navigate(['contractWorkspace']);
         },
         error: (error) => {
           // Showing error toast

@@ -12,7 +12,7 @@ public interface FolderService {
 
     BaseResponse<List<GetFolderResponse>> getAllFolders() throws Exception;
 
-    void updateFolder(UpdateFolderRequest updateFolderRequest) throws Exception;
+    BaseResponse<List<GetFolderResponse>> updateFolder(UpdateFolderRequest updateFolderRequest) throws Exception;
 
     BaseResponse<List<GetFolderResponse>> addFolder(AddFolderRequest  addFolderRequest) throws Exception;
 }
