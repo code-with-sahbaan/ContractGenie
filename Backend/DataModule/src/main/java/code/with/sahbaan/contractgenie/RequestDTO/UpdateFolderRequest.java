@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class UpdateFolderRequest {
 
-    private long id;
+    private long folderId;
     private String folderName;
 }

@@ -44,7 +44,7 @@ public class DataBootstrapping implements CommandLineRunner {
         if (userRepository.findByEmail("sahbaanalam34@gmail.com").isEmpty()){
             Users users = new Users();
             users.setFullName("Sahbaan Alam");
-            users.setIsActive(false);
+            users.setIsActive(true);
             users.setEmail("sahbaanalam34@gmail.com");
             users.setPassword(new BCryptPasswordEncoder().encode("123456789"));
             userRepository.save(users);

@@ -141,9 +141,8 @@ export class OnBoarding {
       .subscribe({
         next: (response) => {
           // Showing success Toast
-          this.uiService.showSuccess("OTP verified successfully");
+          this.uiService.showSuccess("OTP verified successfully. Please login again");
           this.onBoardingService.verifyProfileModal = false;
-          this.router.navigate(['contractWorkspace']);
         },
         error: (error) => {
           // Showing error toast

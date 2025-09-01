@@ -16,7 +16,8 @@
                     <p-accordion-header (click)="activateFolder(fld.folderId)">
                         <div class="grid grid-nogutter align-items-center gap-3">
                             {{fld.folderName}}
-                            <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true" (click)="showUpdateFolderModal(fld)" />
+                            <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
+                                (click)="showUpdateFolderModal(fld)" />
                             <p-button class="w-1" icon="pi pi-trash" [text]="true" [rounded]="true" />
                         </div>
                     </p-accordion-header>
@@ -112,22 +113,24 @@
             <p-tabpanels [style]="{ height: '90%' }">
                 <p-tabpanel value="0">
                     <div class="h-full flex flex-column justify-content-end w-full">
-                        @if (queryList.length > 0) {
-                        <div style="height: 90%;">
-                            @for (item of queryList; track $index) {
-                            <p>{{item}}</p>
+                        @if (chatMessages.length > 0) {
+                        <div style="height: 90%;" class="flex flex-column gap-4">
+                            @for (item of chatMessages; track $index) {
+                            <div class="p-4 border-1 border-dashed border-round-xl">
+                                <p>{{item.userMessage}}</p>
+                            </div>
                             }
                         </div>
                         }@else {
                         <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
                         }
 
-                        <div class="flex gap-2">
-                            <input pInputText id="email" aria-describedby="email-help" [(ngModel)]="query"
-                                placeholder="Ask Anything" (keydown)="keyDown($event)" />
+                        <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
+                            <input pInputText id="userMessage" aria-describedby="userMessage-help"
+                                formControlName="userMessage" placeholder="Ask Anything" />
                             <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
-                                [disabled]="query.length == 0" (click)="submitQuery()" />
-                        </div>
+                                [disabled]="aiChatForm.invalid" />
+                        </form>
                     </div>
                 </p-tabpanel>
             </p-tabpanels>
@@ -149,23 +152,23 @@
     <!-- Add Folder Dialog -->
     <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Folder" [modal]="true"
         [(visible)]="addFolderModal" [style]="{ width: '50rem' }">
-        <div class="flex flex-column gap-3">
-            <input pInputText id="folderName" aria-describedby="folderName-help" [(ngModel)]="folderName"
+        <form [formGroup]="addFolderForm" class="flex flex-column gap-3" (ngSubmit)="addFolder()">
+            <input pInputText id="folderName" aria-describedby="folderName-help" formControlName="folderName"
                 placeholder="Folder Name" />
-            <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="folderName.length == 0"
-                label="Add Folder" (click)="addFolder()" />
-        </div>
+            <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="addFolderForm.invalid" label="Add Folder"
+                type="submit" />
+        </form>
     </p-dialog>
 
     <!-- Update Folder Dialog -->
     <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Folder" [modal]="true"
         [(visible)]="updateFolderModal" [style]="{ width: '50rem' }">
-        <div class="flex flex-column gap-3">
-            <input pInputText id="folderName" aria-describedby="folderName-help"
-                [(ngModel)]="updatedFolderName" placeholder="Folder Name" />
-            <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="updatedFolderName.length == 0 || updatedFolderName == updateFolderModel.folderName"
+        <form [formGroup]="updateFolderForm" class="flex flex-column gap-3">
+            <input pInputText id="folderName" aria-describedby="folderName-help" formControlName="folderName"
+                placeholder="Folder Name" />
+            <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="updateFolderForm.invalid"
                 label="Update Folder" (click)="updateFolder()" />
-        </div>
+        </form>
     </p-dialog>
 
 </main>

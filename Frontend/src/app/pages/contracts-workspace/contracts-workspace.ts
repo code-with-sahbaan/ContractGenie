@@ -4,22 +4,40 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AccordionModule } from 'primeng/accordion';
 import { TabList, TabsModule } from 'primeng/tabs';
 import { DrawerModule } from 'primeng/drawer';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
 import { AddFolder, FolderService, UpdateFolder } from '../../services/folder.service';
 import { UiService } from '../../services/ui.service';
 import { finalize } from 'rxjs';
 import { logout } from '../../utils/common.util';
+import { ChatPrompt } from '../../services/ai.service';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog],
+  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog, ReactiveFormsModule],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
 export class ContractsWorkspace implements OnInit {
 
-  constructor(public folderService: FolderService, public uiService: UiService) { }
+  addFolderForm: FormGroup;
+  updateFolderForm: FormGroup;
+  aiChatForm: FormGroup;
+
+  constructor(public folderService: FolderService, public uiService: UiService, public formBuilder: FormBuilder) {
+    this.addFolderForm = formBuilder.group({
+      folderName: ['', [Validators.required]],
+    });
+
+    this.updateFolderForm = formBuilder.group({
+      folderName: ['', [Validators.required]],
+      folderId: [0, [Validators.required]]
+    });
+
+    this.aiChatForm = formBuilder.group({
+      userMessage: ['', [Validators.required]],
+    });
+  }
 
   @ViewChild('tablistRef') tabList!: TabList;
   activeContractId: number = 0;
@@ -28,15 +46,10 @@ export class ContractsWorkspace implements OnInit {
   isDesktop = true;
   visibleContract = false;
   query: string = "";
-  queryList: string[] = [];
+  chatMessages: ChatPrompt[] = [];
   addFolderModal: boolean = false;
   updateFolderModal: boolean = false;
-  folderName: string = '';
   updatedFolderName: string = '';
-  updateFolderModel: UpdateFolder = {
-    id: 0,
-    folderName: ''
-  }
 
   ngOnInit(): void {
     setTimeout(() => this.getFolders(), 0);
@@ -80,16 +93,13 @@ export class ContractsWorkspace implements OnInit {
   }
 
   submitQuery() {
-    const temp = this.queryList;
-    this.queryList.push(this.query);
-    this.queryList = [...temp];
-    this.query = "";
-  }
-
-  keyDown(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      this.submitQuery();
+    if (this.aiChatForm.invalid) {
+      return;
     }
+    const temp = this.chatMessages;
+    temp.push(this.aiChatForm.value);
+    this.chatMessages = [...temp];
+    this.aiChatForm.reset();
   }
 
   getContractInsights() {
@@ -100,10 +110,12 @@ export class ContractsWorkspace implements OnInit {
   }
 
   addFolder() {
-    const payload: AddFolder = {
-      folderName: this.folderName
+    if (this.addFolderForm.invalid) {
+      return;
     }
-
+    const payload: AddFolder = {
+      folderName: this.addFolderForm.get('folderName')?.value
+    }
     this.uiService.showSpinner();
     this.folderService
       .addFolder(payload)
@@ -129,10 +141,12 @@ export class ContractsWorkspace implements OnInit {
   }
 
   updateFolder() {
+    if (this.updateFolderForm.invalid) {
+      return;
+    }
     this.uiService.showSpinner();
-    this.updateFolderModel.folderName = this.updatedFolderName;
     this.folderService
-      .updateFolder(this.updateFolderModel)
+      .updateFolder(this.updateFolderForm.value)
       .pipe(
         finalize(() => {
           // Hiding Loader after API call completion
@@ -182,10 +196,9 @@ export class ContractsWorkspace implements OnInit {
       });
   }
 
-  showUpdateFolderModal(folder: any){
-    this.updateFolderModel.id = folder.folderId;
-    this.updateFolderModel.folderName = folder.folderName;
-    this.updatedFolderName = folder.folderName;
+  showUpdateFolderModal(folder: UpdateFolder) {
+    this.updateFolderForm.get('folderId')?.setValue(folder.folderId);
+    this.updateFolderForm.get('folderName')?.setValue(folder.folderName);
     this.updateFolderModal = true;
   }
 }

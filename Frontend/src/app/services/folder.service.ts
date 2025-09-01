@@ -9,7 +9,7 @@ export interface AddFolder{
 
 export interface UpdateFolder{
     folderName: string,
-    id: number
+    folderId: number
 }
 
 @Injectable({
