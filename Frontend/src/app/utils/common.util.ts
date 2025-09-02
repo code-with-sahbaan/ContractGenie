@@ -1,6 +1,7 @@
 import { environment } from "../../environments/environment";
 
 const APP_URL = environment.app_url;
+export const MAX_FILE_SIZE = 1073741824;
 
 export function getJWTtoken() {
     const data = getCurrentUserData();

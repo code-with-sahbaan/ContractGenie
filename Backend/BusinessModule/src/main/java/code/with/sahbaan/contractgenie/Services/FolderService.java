@@ -1,5 +1,6 @@
 package code.with.sahbaan.contractgenie.Services;
 
+import code.with.sahbaan.contractgenie.Entities.Folder;
 import code.with.sahbaan.contractgenie.RequestDTO.AddFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.UpdateFolderRequest;
@@ -15,4 +16,6 @@ public interface FolderService {
     BaseResponse<List<GetFolderResponse>> updateFolder(UpdateFolderRequest updateFolderRequest) throws Exception;
 
     BaseResponse<List<GetFolderResponse>> addFolder(AddFolderRequest  addFolderRequest) throws Exception;
+
+    Folder getFolderById(long folderId) throws Exception;
 }

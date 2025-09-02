@@ -61,4 +61,13 @@ public class FolderServiceImpl extends GenericServiceImpl<Folder> implements Fol
         folderRepository.save(folder);
         return getAllFolders();
     }
+
+    @Override
+    public Folder getFolderById(long folderId) throws Exception {
+        try{
+            return folderRepository.findById(folderId).get();
+        } catch (Exception e) {
+            throw new Exception("Failed to get folder");
+        }
+    }
 }

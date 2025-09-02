@@ -1,6 +1,7 @@
 package code.with.sahbaan.contractgenie;
 
-import jakarta.annotation.PostConstruct;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,15 @@ public class AppConfigurations {
 
     @Value("${spring.mail.password}")
     private String emailPassword;
+
+    @Value("${CLOUDINARY_CLOUD_NAME}")
+    private String cloudName;
+
+    @Value("${CLOUDINARY_API_KEY}")
+    private String apiKey;
+
+    @Value("${CLOUDINARY_API_SECRET}")
+    private String apiSecret;
 
 
     @Bean
@@ -35,5 +45,14 @@ public class AppConfigurations {
         props.put("mail.debug", "true");
 
         return mailSender1;
+    }
+
+    @Bean
+    Cloudinary cloudinary(){
+        return new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret
+        ));
     }
 }

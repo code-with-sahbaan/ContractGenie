@@ -9,12 +9,14 @@ import { Dialog } from 'primeng/dialog';
 import { AddFolder, FolderService, UpdateFolder } from '../../services/folder.service';
 import { UiService } from '../../services/ui.service';
 import { finalize } from 'rxjs';
-import { logout } from '../../utils/common.util';
+import { logout, MAX_FILE_SIZE } from '../../utils/common.util';
 import { ChatPrompt } from '../../services/ai.service';
+import { Select } from 'primeng/select';
+import { FileUpload, UploadEvent } from 'primeng/fileupload';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog, ReactiveFormsModule],
+  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog, ReactiveFormsModule, Select, FileUpload],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
@@ -23,6 +25,7 @@ export class ContractsWorkspace implements OnInit {
   addFolderForm: FormGroup;
   updateFolderForm: FormGroup;
   aiChatForm: FormGroup;
+  addContractForm: FormGroup;
 
   constructor(public folderService: FolderService, public uiService: UiService, public formBuilder: FormBuilder) {
     this.addFolderForm = formBuilder.group({
@@ -37,6 +40,12 @@ export class ContractsWorkspace implements OnInit {
     this.aiChatForm = formBuilder.group({
       userMessage: ['', [Validators.required]],
     });
+
+    this.addContractForm = formBuilder.group({
+      contractFile: [null, [Validators.required]],
+      contractName: ['', [Validators.required]],
+      folderId: [0, [Validators.required]]
+    })
   }
 
   @ViewChild('tablistRef') tabList!: TabList;
@@ -50,6 +59,7 @@ export class ContractsWorkspace implements OnInit {
   addFolderModal: boolean = false;
   updateFolderModal: boolean = false;
   updatedFolderName: string = '';
+  addContractModal: boolean = false;
 
   ngOnInit(): void {
     setTimeout(() => this.getFolders(), 0);
@@ -200,5 +210,18 @@ export class ContractsWorkspace implements OnInit {
     this.updateFolderForm.get('folderId')?.setValue(folder.folderId);
     this.updateFolderForm.get('folderName')?.setValue(folder.folderName);
     this.updateFolderModal = true;
+  }
+
+  addContract() {
+    console.log(this.addContractForm.value);
+  }
+
+  onUpload(event: any) {
+    const file = event.files[0];
+    if (file.size > MAX_FILE_SIZE) {
+      this.uiService.showError("File Size too Large. Max File Size allowed: 1GB");
+      return;
+    }
+    this.addContractForm.get('contractFile')?.setValue(file);
   }
 }

@@ -4,7 +4,7 @@
     @if (isDesktop) {
     <section class="col-3 h-full p-6 flex flex-column gap-4">
         <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
-        <p-button class="w-full" label="Add Contract" icon="pi pi-file" />
+        <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
         <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
         <br>
         <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
@@ -45,8 +45,9 @@
         [modal]="!isDesktop" position="left" [style]="{ width: '80%' }" [blockScroll]="!isDesktop">
         <ng-template #headless>
             <section class="w-full h-full p-6 flex flex-column gap-4">
-                <p-button class="w-full" label="Add Folder" (click)="addFolderModal = true;" icon="pi pi-folder" />
-                <p-button class="w-full" label="Add File" icon="pi pi-file" />
+                <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
+                <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
+                <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
                 <br>
                 <div class="h-full flex flex-column gap-3 h-full overflow-auto">
                     <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
@@ -57,11 +58,10 @@
                             <p-accordion-header (click)="activateFolder(fld.folderId)">
                                 <div class="flex flex-column gap-3">
                                     {{fld.folderName}}
-                                    <div class="flex">
-                                        <div class="w-6"><p-button icon="pi pi-pencil" [text]="true" [rounded]="true" />
-                                        </div>
-                                        <div class="w-6"> <p-button icon="pi pi-trash" [text]="true" [rounded]="true" />
-                                        </div>
+                                    <div class="flex gap-4">
+                                        <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
+                                            (click)="showUpdateFolderModal(fld)" />
+                                        <p-button class="w-1" icon="pi pi-trash" [text]="true" [rounded]="true" />
                                     </div>
                                 </div>
                             </p-accordion-header>
@@ -168,6 +168,21 @@
                 placeholder="Folder Name" />
             <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="updateFolderForm.invalid"
                 label="Update Folder" (click)="updateFolder()" />
+        </form>
+    </p-dialog>
+
+    <!-- Add Contract Dialog -->
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Contract" [modal]="true"
+        [(visible)]="addContractModal" [style]="{ width: '50rem' }">
+        <form [formGroup]="addContractForm" class="flex flex-column gap-3">
+            <p-select [options]="folders" formControlName="folderId" optionValue="folderId" optionLabel="folderName"
+                placeholder="Select a Folder" class="w-full" />
+            <input pInputText id="contractName" aria-describedby="contractName-help" formControlName="contractName"
+                placeholder="Contract Name" />
+            <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept=".pdf,.doc,.docx"
+                (onSelect)="onUpload($event)" chooseLabel="Browse File" />
+            <p-button [rounded]="true" [disabled]="false" label="Add Contract" [disabled]="addContractForm.invalid"
+                (click)="addContract()" />
         </form>
     </p-dialog>
 
