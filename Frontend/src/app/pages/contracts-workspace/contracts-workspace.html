@@ -16,9 +16,9 @@
                     <p-accordion-header (click)="activateFolder(fld.folderId)">
                         <div class="grid grid-nogutter align-items-center gap-3">
                             {{fld.folderName}}
-                            <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
-                                (click)="showUpdateFolderModal(fld)" />
-                            <p-button class="w-1" icon="pi pi-trash" [text]="true" [rounded]="true" />
+                            <p-button class="w-2" icon="pi pi-pencil" [text]="true" [rounded]="true"
+                                (click)="showUpdateFolderModal($event, fld)" />
+                            <p-button class="w-2" icon="pi pi-trash" [text]="true" [rounded]="true" />
                         </div>
                     </p-accordion-header>
                     <p-accordion-content>
@@ -60,7 +60,7 @@
                                     {{fld.folderName}}
                                     <div class="flex gap-4">
                                         <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
-                                            (click)="showUpdateFolderModal(fld)" />
+                                            (click)="showUpdateFolderModal($event, fld)" />
                                         <p-button class="w-1" icon="pi pi-trash" [text]="true" [rounded]="true" />
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                 <p-tab value="{{selCtrs.contractId}}" class="grid grid-nogutter" style="position: relative;">
                     <p class="pr-6">{{selCtrs.contractName}}</p>
                     <div style="position: absolute; top: 0; right: 0;z-index: 100;">
-                        <p-button (click)="removeContract(selCtrs)" icon="pi pi-times" size="small" class="w-1" />
+                        <p-button (click)="removeContract($event, selCtrs)" icon="pi pi-times" size="small" class="w-1" />
                     </div>
                 </p-tab>
                 }

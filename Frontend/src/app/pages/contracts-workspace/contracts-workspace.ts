@@ -78,7 +78,8 @@ export class ContractsWorkspace implements OnInit {
     this.visibleContract = false;
   }
 
-  removeContract(contract: any) {
+  removeContract(event:MouseEvent, contract: any) {
+    event.stopPropagation();
     this.selectedContracts.delete(contract.contractId);
     setTimeout(() => (this.activeContractId = 0), 0);
     this.tabList.updateButtonState();
@@ -90,8 +91,10 @@ export class ContractsWorkspace implements OnInit {
 
   tabChange(index: any) {
     this.activeContractId = index;
-    const contract = this.selectedContracts.get(Number(index));
-    this.activeFolderId = contract.folderId;
+    if (index > 0) {
+      const contract = this.selectedContracts.get(Number(index));
+      this.activeFolderId = contract.folderId;  
+    }
   }
 
   checkScreenSize() {
@@ -206,7 +209,8 @@ export class ContractsWorkspace implements OnInit {
       });
   }
 
-  showUpdateFolderModal(folder: UpdateFolder) {
+  showUpdateFolderModal(event: MouseEvent, folder: UpdateFolder) {
+    event.stopPropagation();
     this.updateFolderForm.get('folderId')?.setValue(folder.folderId);
     this.updateFolderForm.get('folderName')?.setValue(folder.folderName);
     this.updateFolderModal = true;
