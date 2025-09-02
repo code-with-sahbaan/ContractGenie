@@ -81,7 +81,7 @@ export class ContractsWorkspace implements OnInit {
   removeContract(event:MouseEvent, contract: any) {
     event.stopPropagation();
     this.selectedContracts.delete(contract.contractId);
-    setTimeout(() => (this.activeContractId = 0), 0);
+    this.activeContractId = 0;
     this.tabList.updateButtonState();
   }
 
