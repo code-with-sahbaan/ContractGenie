@@ -15,5 +15,7 @@ public class GetContractsResponse {
 
     private String contractName;
 
+    private String contractUrl;
+
     private long folderId;
 }

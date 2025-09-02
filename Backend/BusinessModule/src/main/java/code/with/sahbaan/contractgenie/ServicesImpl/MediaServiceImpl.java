@@ -16,7 +16,11 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public String uploadFile(MultipartFile file) throws Exception{
         try{
-            return cloudinary.uploader().upload(file, ObjectUtils.emptyMap()).get("url").toString();
+            return cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder","contract-genie-contracts",
+                    "use_filename", "true",
+                    "unique_filename", "false"
+            )).get("url").toString();
         }catch (Exception e){
             throw new Exception("Failed to upload file");
         }

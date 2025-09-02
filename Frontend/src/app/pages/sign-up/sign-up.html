@@ -18,7 +18,7 @@
                     </small>
                     }
                     <label for="fullName">Full Name</label>
-                    <input pInputText id="fullName" aria-describedby="email-help" formControlName="fullName" />
+                    <input pInputText id="fullName" maxlength="255" aria-describedby="fullName-help" formControlName="fullName" />
                 </div>
                 <div class="w-full flex flex-column gap-3">
                     @if ( getFormControls['email'].touched && getFormControls['email'].invalid) {
@@ -34,7 +34,7 @@
                     }
 
                     <label for="email">Email</label>
-                    <input pInputText id="email" aria-describedby="email-help" formControlName="email" />
+                    <input pInputText id="email" maxlength="255" aria-describedby="email-help" formControlName="email" />
                 </div>
                 <div class="w-full flex flex-column gap-3">
                     @if (getFormControls['password'].touched &&

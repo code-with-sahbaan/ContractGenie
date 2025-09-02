@@ -8,7 +8,7 @@
         <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
         <br>
         <h1 class="text-2xl text-primary-800 font-bold">Folders</h1>
-        <div class="h-full flex flex-column gap-3 h-full overflow-auto justify-content-end">
+        <div class="h-full flex flex-column gap-3 h-full overflow-auto">
             @if (folders.length > 0) {
             @for (fld of folders; track $index) {
             <p-accordion value="{{activeFolderId}}">
@@ -23,10 +23,18 @@
                     </p-accordion-header>
                     <p-accordion-content>
                         <div class="flex flex-column gap-2">
+                            @if (loadingContracts[fld.folderId]) {
+                            <div>
+                                <p-skeleton height="4rem" class="mb-2" />
+                                <p-skeleton height="4rem" class="mb-2" />
+                                <p-skeleton height="4rem" class="mb-2" />
+                            </div>
+                            }@else {
                             @for (ctrs of fld.contracts; track $index) {
                             <p-button class="w-full" (click)="activateContract(ctrs)"
                                 [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
                                 label="{{ctrs.contractName}}" />
+                            }
                             }
                         </div>
                     </p-accordion-content>
@@ -67,11 +75,17 @@
                             </p-accordion-header>
                             <p-accordion-content>
                                 <div class="flex flex-column gap-2">
-                                    @for (ctrs of fld.contracts; track $index) {
+                                    @if (loadingContracts[fld.folderId]) {
+                                    <div>
+                                        <p-skeleton height="4rem" class="mb-2" />
+                                        <p-skeleton height="4rem" class="mb-2" />
+                                        <p-skeleton height="4rem" class="mb-2" />
+                                    </div>
+                                    }@else {@for (ctrs of fld.contracts; track $index) {
                                     <p-button class="w-full" (click)="activateContract(ctrs)"
                                         [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
                                         label="{{ctrs.contractName}}" />
-                                    }
+                                    }}
                                 </div>
                             </p-accordion-content>
                         </p-accordion-panel>
@@ -104,35 +118,43 @@
                 <p-tab value="{{selCtrs.contractId}}" class="grid grid-nogutter" style="position: relative;">
                     <p class="pr-6">{{selCtrs.contractName}}</p>
                     <div style="position: absolute; top: 0; right: 0;z-index: 100;">
-                        <p-button (click)="removeContract($event, selCtrs)" icon="pi pi-times" size="small" class="w-1" />
+                        <p-button (click)="removeContract($event, selCtrs)" icon="pi pi-times" size="small"
+                            class="w-1" />
                     </div>
                 </p-tab>
                 }
             </p-tablist>
 
             <p-tabpanels [style]="{ height: '90%' }">
-                <p-tabpanel value="0">
-                    <div class="h-full flex flex-column justify-content-end w-full">
-                        @if (chatMessages.length > 0) {
-                        <div style="height: 90%;" class="flex flex-column gap-4">
-                            @for (item of chatMessages; track $index) {
-                            <div class="p-4 border-1 border-dashed border-round-xl">
-                                <p>{{item.userMessage}}</p>
-                            </div>
-                            }
-                        </div>
-                        }@else {
-                        <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
-                        }
 
-                        <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
-                            <input pInputText id="userMessage" aria-describedby="userMessage-help"
-                                formControlName="userMessage" placeholder="Ask Anything" />
-                            <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
-                                [disabled]="aiChatForm.invalid" />
-                        </form>
-                    </div>
-                </p-tabpanel>
+                @if (activeContractId == 0) {
+                    <p-tabpanel value="0">
+                        <div class="h-full flex flex-column justify-content-end w-full">
+                            @if (chatMessages.length > 0) {
+                            <div style="height: 90%;" class="flex flex-column gap-4">
+                                @for (item of chatMessages; track $index) {
+                                <div class="p-4 border-1 border-dashed border-round-xl">
+                                    <p>{{item.userMessage}}</p>
+                                </div>
+                                }
+                            </div>
+                            }@else {
+                            <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
+                            }
+
+                            <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
+                                <input pInputText maxlength="255" id="userMessage" aria-describedby="userMessage-help"
+                                    formControlName="userMessage" placeholder="Ask Anything" />
+                                <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
+                                    [disabled]="aiChatForm.invalid" />
+                            </form>
+                        </div>
+                    </p-tabpanel>
+                }@else {
+                    <ngx-extended-pdf-viewer [src]="activeContractUrl" [textLayer]="true" [showDownloadButton]="true"
+                        style="width:100%; height:80vh;"></ngx-extended-pdf-viewer>
+                }
+
             </p-tabpanels>
         </p-tabs>
     </section>
@@ -153,8 +175,8 @@
     <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Folder" [modal]="true"
         [(visible)]="addFolderModal" [style]="{ width: '50rem' }">
         <form [formGroup]="addFolderForm" class="flex flex-column gap-3" (ngSubmit)="addFolder()">
-            <input pInputText id="folderName" aria-describedby="folderName-help" formControlName="folderName"
-                placeholder="Folder Name" />
+            <input pInputText id="folderName" maxlength="255" aria-describedby="folderName-help"
+                formControlName="folderName" placeholder="Folder Name" />
             <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="addFolderForm.invalid" label="Add Folder"
                 type="submit" />
         </form>
@@ -164,8 +186,8 @@
     <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Folder" [modal]="true"
         [(visible)]="updateFolderModal" [style]="{ width: '50rem' }">
         <form [formGroup]="updateFolderForm" class="flex flex-column gap-3">
-            <input pInputText id="folderName" aria-describedby="folderName-help" formControlName="folderName"
-                placeholder="Folder Name" />
+            <input pInputText id="folderName" maxlength="255" aria-describedby="folderName-help"
+                formControlName="folderName" placeholder="Folder Name" />
             <p-button [style]="{'height':'100%'}" [rounded]="true" [disabled]="updateFolderForm.invalid"
                 label="Update Folder" (click)="updateFolder()" />
         </form>
@@ -177,8 +199,8 @@
         <form [formGroup]="addContractForm" class="flex flex-column gap-3">
             <p-select [options]="folders" formControlName="folderId" optionValue="folderId" optionLabel="folderName"
                 placeholder="Select a Folder" class="w-full" />
-            <input pInputText id="contractName" aria-describedby="contractName-help" formControlName="contractName"
-                placeholder="Contract Name" />
+            <input pInputText maxlength="255" id="contractName" aria-describedby="contractName-help"
+                formControlName="contractName" placeholder="Contract Name" />
             <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept=".pdf,.doc,.docx"
                 (onSelect)="onUpload($event)" chooseLabel="Browse File" />
             <p-button [rounded]="true" [disabled]="false" label="Add Contract" [disabled]="addContractForm.invalid"

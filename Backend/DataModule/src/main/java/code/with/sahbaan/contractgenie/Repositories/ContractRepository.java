@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface ContractRepository extends JpaRepository<Contract,Long> {
 
-    @Query("SELECT NEW code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse(c.contractId, c.contractName, c.folder.folderId) " +
+    @Query("SELECT NEW code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse(" +
+            "c.contractId, " +
+            "c.contractName, " +
+            "c.contractUrl, " +
+            "c.folder.folderId) " +
             "FROM Contract c " +
             "WHERE c.folder.folderId = :folderId")
     List<GetContractsResponse> getContractsByFolderId(@Param("folderId") long folderId);

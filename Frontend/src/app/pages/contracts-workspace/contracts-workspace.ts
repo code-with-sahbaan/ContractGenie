@@ -13,10 +13,26 @@ import { logout, MAX_FILE_SIZE } from '../../utils/common.util';
 import { ChatPrompt } from '../../services/ai.service';
 import { Select } from 'primeng/select';
 import { FileUpload, UploadEvent } from 'primeng/fileupload';
+import { ContractService, FolderList, GetContracts } from '../../services/contract.service';
+import { SkeletonModule } from 'primeng/skeleton';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @Component({
   selector: 'app-contracts-workspace',
-  imports: [InputTextModule, ButtonModule, AccordionModule, TabsModule, DrawerModule, FormsModule, Dialog, ReactiveFormsModule, Select, FileUpload],
+  imports: [
+    InputTextModule, 
+    ButtonModule, 
+    AccordionModule, 
+    TabsModule, 
+    DrawerModule, 
+    FormsModule, 
+    Dialog, 
+    ReactiveFormsModule, 
+    Select, 
+    FileUpload, 
+    SkeletonModule, 
+    NgxExtendedPdfViewerModule
+  ],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
 })
@@ -27,7 +43,11 @@ export class ContractsWorkspace implements OnInit {
   aiChatForm: FormGroup;
   addContractForm: FormGroup;
 
-  constructor(public folderService: FolderService, public uiService: UiService, public formBuilder: FormBuilder) {
+  constructor(
+    public folderService: FolderService,
+    public contractService: ContractService,
+    public uiService: UiService,
+    public formBuilder: FormBuilder) {
     this.addFolderForm = formBuilder.group({
       folderName: ['', [Validators.required]],
     });
@@ -50,6 +70,7 @@ export class ContractsWorkspace implements OnInit {
 
   @ViewChild('tablistRef') tabList!: TabList;
   activeContractId: number = 0;
+  activeContractUrl: string = '';
   activeFolderId: number = 0;
   selectedContracts: Map<number, any> = new Map<number, any>();
   isDesktop = true;
@@ -60,6 +81,7 @@ export class ContractsWorkspace implements OnInit {
   updateFolderModal: boolean = false;
   updatedFolderName: string = '';
   addContractModal: boolean = false;
+  loadingContracts: { [key: string]: boolean } = {};
 
   ngOnInit(): void {
     setTimeout(() => this.getFolders(), 0);
@@ -69,16 +91,17 @@ export class ContractsWorkspace implements OnInit {
   onResize() {
     this.checkScreenSize();
   }
-  folders: any[] = []
+  folders: FolderList[] = [];
 
   activateContract(contract: any) {
     this.selectedContracts.set(contract.contractId, contract);
     this.activeContractId = contract.contractId;
+    this.activeContractUrl = contract.contractUrl;
     this.tabList.updateButtonState();
     this.visibleContract = false;
   }
 
-  removeContract(event:MouseEvent, contract: any) {
+  removeContract(event: MouseEvent, contract: any) {
     event.stopPropagation();
     this.selectedContracts.delete(contract.contractId);
     this.activeContractId = 0;
@@ -87,13 +110,37 @@ export class ContractsWorkspace implements OnInit {
 
   activateFolder(folderId: number) {
     this.activeFolderId = folderId;
+    this.loadingContracts[folderId] = true;
+    const payload: GetContracts = {
+      folderId: folderId
+    }
+    this.contractService
+      .getContracts(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+          this.loadingContracts[folderId] = false;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          const contracts = response.responseBody;
+          this.addContractsToFolder(folderId, contracts);
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
   }
 
   tabChange(index: any) {
     this.activeContractId = index;
     if (index > 0) {
       const contract = this.selectedContracts.get(Number(index));
-      this.activeFolderId = contract.folderId;  
+      this.activeFolderId = contract.folderId;
+      this.activeContractUrl = contract.contractUrl;
     }
   }
 
@@ -217,7 +264,53 @@ export class ContractsWorkspace implements OnInit {
   }
 
   addContract() {
-    console.log(this.addContractForm.value);
+    if (this.addContractForm.invalid) {
+      return;
+    }
+    const payload = new FormData();
+    payload.append("contractFile", this.addContractForm.get('contractFile')?.value);
+    payload.append("contractName", this.addContractForm.get('contractName')?.value);
+    payload.append("folderId", this.addContractForm.get('folderId')?.value);
+    this.uiService.showSpinner();
+    this.contractService
+      .addContract(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uiService.showSuccess("Contract Added Successfully");
+          const contracts = response.responseBody;
+          this.addContractModal = false;
+          this.addContractsToFolder(this.addContractForm.get('folderId')?.value, contracts);
+          this.addContractForm.reset();
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
+  }
+
+  addContractsToFolder(folderId: number, contracts: any[]) {
+    let index = 0;
+    let folder = null;
+    for (let i = 0; i < this.folders.length; i++) {
+      if (this.folders[i].folderId == folderId) {
+        index = i;
+        folder = this.folders[i];
+      }
+    }
+
+    if (folder) {
+      folder.contracts = [...contracts];
+      this.folders[index] = folder;
+    }
+
   }
 
   onUpload(event: any) {
