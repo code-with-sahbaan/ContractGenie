@@ -2,6 +2,7 @@ package code.with.sahbaan.contractgenie.Controllers.v1;
 
 import code.with.sahbaan.contractgenie.RequestDTO.AddContractRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetContractsRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.UpdateContractRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
 import code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse;
 import code.with.sahbaan.contractgenie.Services.ContractService;
@@ -43,5 +44,12 @@ public class ContractController {
                         folderId
                 )
         ), HttpStatus.OK);
+    }
+
+    @PostMapping("v1/updateContract")
+    public ResponseEntity<BaseResponse<List<GetContractsResponse>>> updateContract(@RequestBody UpdateContractRequest updateContractRequest) throws Exception {
+
+        log.info("Executing updateContract in ContractController");
+        return new ResponseEntity<>(contractService.updateContract(updateContractRequest), HttpStatus.OK);
     }
 }

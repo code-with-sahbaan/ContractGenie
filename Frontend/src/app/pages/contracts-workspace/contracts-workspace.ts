@@ -42,6 +42,7 @@ export class ContractsWorkspace implements OnInit {
   updateFolderForm: FormGroup;
   aiChatForm: FormGroup;
   addContractForm: FormGroup;
+  updateContractForm: FormGroup;
 
   constructor(
     public folderService: FolderService,
@@ -65,6 +66,13 @@ export class ContractsWorkspace implements OnInit {
       contractFile: [null, [Validators.required]],
       contractName: ['', [Validators.required]],
       folderId: [0, [Validators.required]]
+    });
+
+    this.updateContractForm = formBuilder.group({
+      contractUrl: [null, [Validators.required]],
+      contractName: ['', [Validators.required]],
+      folderId: [0, [Validators.required]],
+      contractId: [0, [Validators.required]]
     })
   }
 
@@ -81,6 +89,7 @@ export class ContractsWorkspace implements OnInit {
   updateFolderModal: boolean = false;
   updatedFolderName: string = '';
   addContractModal: boolean = false;
+  updateContractModal: boolean = false;
   loadingContracts: { [key: string]: boolean } = {};
 
   ngOnInit(): void {
@@ -109,6 +118,10 @@ export class ContractsWorkspace implements OnInit {
   }
 
   activateFolder(folderId: number) {
+    if (folderId == this.activeFolderId) {
+      this.activeFolderId = 0;
+      return;
+    }
     this.activeFolderId = folderId;
     this.loadingContracts[folderId] = true;
     const payload: GetContracts = {
@@ -261,6 +274,15 @@ export class ContractsWorkspace implements OnInit {
     this.updateFolderForm.get('folderId')?.setValue(folder.folderId);
     this.updateFolderForm.get('folderName')?.setValue(folder.folderName);
     this.updateFolderModal = true;
+  }
+
+  showUpdateContractModal(contract: any){
+    this.updateContractModal = true;
+    // Setting up values
+    this.updateContractForm.get('contractId')?.setValue(contract.contractId);
+    this.updateContractForm.get('contractName')?.setValue(contract.contractName);
+    this.updateContractForm.get('contractUrl')?.setValue(contract.contractUrl);
+    this.updateContractForm.get('folderId')?.setValue(contract.folderId);
   }
 
   addContract() {

@@ -1,8 +1,8 @@
-<main class="grid grid-nogutter h-screen">
+<main class="grid grid-nogutter h-screen p-3">
 
     <!-- Folders -->
     @if (isDesktop) {
-    <section class="col-3 h-full p-6 flex flex-column gap-4">
+    <section class="col-3 h-full p-3 flex flex-column gap-4">
         <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
         <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
         <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
@@ -16,9 +16,9 @@
                     <p-accordion-header (click)="activateFolder(fld.folderId)">
                         <div class="grid grid-nogutter align-items-center gap-3">
                             {{fld.folderName}}
-                            <p-button class="w-2" icon="pi pi-pencil" [text]="true" [rounded]="true"
+                            <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
                                 (click)="showUpdateFolderModal($event, fld)" />
-                            <p-button class="w-2" icon="pi pi-trash" [text]="true" [rounded]="true" />
+                            <p-button class="w-1" severity="danger" icon="pi pi-trash" [text]="true" [rounded]="true" />
                         </div>
                     </p-accordion-header>
                     <p-accordion-content>
@@ -31,9 +31,15 @@
                             </div>
                             }@else {
                             @for (ctrs of fld.contracts; track $index) {
-                            <p-button class="w-full" (click)="activateContract(ctrs)"
-                                [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
-                                label="{{ctrs.contractName}}" />
+                            <div class="grid grid-nogutter gap-1 align-items-center justify-content-between">
+                                <p-button class="w-9" (click)="activateContract(ctrs)"
+                                    [severity]="this.activeContractId == ctrs.contractId ? 'primary' : 'secondary'"
+                                    label="{{ctrs.contractName}}" />
+                                <p-button class="w-1" icon="pi pi-pencil" [rounded]="true"
+                                    (click)="showUpdateContractModal(ctrs)" />
+                                <p-button class="w-1" variant="outlined" severity="danger" icon="pi pi-trash" [rounded]="true"
+                                    (click)="showUpdateFolderModal($event, fld)" />
+                            </div>
                             }
                             }
                         </div>
@@ -52,7 +58,7 @@
     <p-drawer #drawerRef [(visible)]="visibleContract" [dismissible]="!isDesktop" [closeOnEscape]="!isDesktop"
         [modal]="!isDesktop" position="left" [style]="{ width: '80%' }" [blockScroll]="!isDesktop">
         <ng-template #headless>
-            <section class="w-full h-full p-6 flex flex-column gap-4">
+            <section class="w-full h-full p-3 flex flex-column gap-4">
                 <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
                 <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
                 <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
@@ -103,7 +109,7 @@
 
 
     <!-- Main Contracts -->
-    <section class="col-12 xl:col-6 h-full p-4 md:p-6">
+    <section class="col-12 xl:col-6 h-full p-4 md:p-3">
         <p-tabs value="{{activeContractId}}" (valueChange)="tabChange($event)" scrollable
             class="h-full flex flex-column justify-content-between">
             @if (!isDesktop) {
@@ -128,31 +134,31 @@
             <p-tabpanels [style]="{ height: '90%' }">
 
                 @if (activeContractId == 0) {
-                    <p-tabpanel value="0">
-                        <div class="h-full flex flex-column justify-content-end w-full">
-                            @if (chatMessages.length > 0) {
-                            <div style="height: 90%;" class="flex flex-column gap-4">
-                                @for (item of chatMessages; track $index) {
-                                <div class="p-4 border-1 border-dashed border-round-xl">
-                                    <p>{{item.userMessage}}</p>
-                                </div>
-                                }
+                <p-tabpanel value="0">
+                    <div class="h-full flex flex-column justify-content-end w-full">
+                        @if (chatMessages.length > 0) {
+                        <div style="height: 90%;" class="flex flex-column gap-4">
+                            @for (item of chatMessages; track $index) {
+                            <div class="p-4 border-1 border-dashed border-round-xl">
+                                <p>{{item.userMessage}}</p>
                             </div>
-                            }@else {
-                            <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
                             }
-
-                            <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
-                                <input pInputText maxlength="255" id="userMessage" aria-describedby="userMessage-help"
-                                    formControlName="userMessage" placeholder="Ask Anything" />
-                                <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
-                                    [disabled]="aiChatForm.invalid" />
-                            </form>
                         </div>
-                    </p-tabpanel>
+                        }@else {
+                        <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
+                        }
+
+                        <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
+                            <input pInputText maxlength="255" id="userMessage" aria-describedby="userMessage-help"
+                                formControlName="userMessage" placeholder="Ask Anything" />
+                            <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
+                                [disabled]="aiChatForm.invalid" />
+                        </form>
+                    </div>
+                </p-tabpanel>
                 }@else {
-                    <ngx-extended-pdf-viewer [src]="activeContractUrl" [textLayer]="true" [showDownloadButton]="true"
-                        style="width:100%; height:80vh;"></ngx-extended-pdf-viewer>
+                <ngx-extended-pdf-viewer [src]="activeContractUrl" [textLayer]="true" [showDownloadButton]="true"
+                    style="width:100%; height:80vh;"></ngx-extended-pdf-viewer>
                 }
 
             </p-tabpanels>
@@ -160,7 +166,7 @@
     </section>
 
     <!-- Contracts Insigt -->
-    <section class="col-12 xl:col-3 h-full p-6 flex flex-column gap-4 justify-content-between">
+    <section class="col-12 xl:col-3 h-full p-3 flex flex-column gap-4 justify-content-between">
         <h1 class="text-3xl font-bold text-primary">Contract Insights</h1>
         <div class="bg-primary-50 p-4 border-round-xl h-full">
             @if (activeContractId == 0) {
@@ -172,7 +178,7 @@
     </section>
 
     <!-- Add Folder Dialog -->
-    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Folder" [modal]="true"
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Folder" [modal]="true" (onHide)="addFolderForm.reset()"
         [(visible)]="addFolderModal" [style]="{ width: '50rem' }">
         <form [formGroup]="addFolderForm" class="flex flex-column gap-3" (ngSubmit)="addFolder()">
             <input pInputText id="folderName" maxlength="255" aria-describedby="folderName-help"
@@ -183,7 +189,7 @@
     </p-dialog>
 
     <!-- Update Folder Dialog -->
-    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Folder" [modal]="true"
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Folder" [modal]="true" (onHide)="updateFolderForm.reset()"
         [(visible)]="updateFolderModal" [style]="{ width: '50rem' }">
         <form [formGroup]="updateFolderForm" class="flex flex-column gap-3">
             <input pInputText id="folderName" maxlength="255" aria-describedby="folderName-help"
@@ -194,7 +200,7 @@
     </p-dialog>
 
     <!-- Add Contract Dialog -->
-    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Contract" [modal]="true"
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Add Contract" [modal]="true" (onHide)="addContractForm.reset()"
         [(visible)]="addContractModal" [style]="{ width: '50rem' }">
         <form [formGroup]="addContractForm" class="flex flex-column gap-3">
             <p-select [options]="folders" formControlName="folderId" optionValue="folderId" optionLabel="folderName"
@@ -204,6 +210,21 @@
             <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept=".pdf,.doc,.docx"
                 (onSelect)="onUpload($event)" chooseLabel="Browse File" />
             <p-button [rounded]="true" [disabled]="false" label="Add Contract" [disabled]="addContractForm.invalid"
+                (click)="addContract()" />
+        </form>
+    </p-dialog>
+
+    <!-- Update Contract Dialog -->
+    <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Contract" [modal]="true" (onHide)="updateContractForm.reset()"
+        [(visible)]="updateContractModal" [style]="{ width: '50rem' }">
+        <form [formGroup]="updateContractForm" class="flex flex-column gap-3">
+            <p-select [options]="folders" formControlName="folderId" optionValue="folderId" optionLabel="folderName"
+                placeholder="Select a Folder" class="w-full" />
+            <input pInputText maxlength="255" id="contractName" aria-describedby="contractName-help"
+                formControlName="contractName" placeholder="Contract Name" />
+            <p-fileupload mode="basic" name="demo[]" chooseIcon="pi pi-upload" accept=".pdf,.doc,.docx"
+                (onSelect)="onUpload($event)" chooseLabel="Browse File" />
+            <p-button [rounded]="true" [disabled]="false" label="Update Contract" [disabled]="updateContractForm.invalid"
                 (click)="addContract()" />
         </form>
     </p-dialog>

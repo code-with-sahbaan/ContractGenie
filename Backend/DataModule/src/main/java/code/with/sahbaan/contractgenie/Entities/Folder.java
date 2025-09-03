@@ -24,7 +24,12 @@ public class Folder {
     @ManyToOne(fetch = FetchType.LAZY)
     private Users users;
 
-    @OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "folder",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Contract> contracts = new ArrayList<>();
 
 }

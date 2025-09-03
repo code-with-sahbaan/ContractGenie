@@ -5,6 +5,7 @@ import code.with.sahbaan.contractgenie.Entities.Folder;
 import code.with.sahbaan.contractgenie.Repositories.ContractRepository;
 import code.with.sahbaan.contractgenie.RequestDTO.AddContractRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetContractsRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.UpdateContractRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
 import code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse;
 import code.with.sahbaan.contractgenie.Services.ContractService;
@@ -57,6 +58,23 @@ public class ContractServiceImpl extends GenericServiceImpl<Contract> implements
             return getAllContracts(getContractsRequest);
         } catch (Exception e) {
             throw new Exception("Failed to add Contract");
+        }
+    }
+
+    @Override
+    public BaseResponse<List<GetContractsResponse>> updateContract(UpdateContractRequest updateContractRequest) throws Exception {
+        try{
+            Contract contract = contractRepository.findById(updateContractRequest.getContractId()).get();
+            contract.setContractName(updateContractRequest.getContractName());
+            contract.setContractUrl(updateContractRequest.getContractUrl());
+            Folder folder = folderService.getFolderById(updateContractRequest.getFolderId());
+            contract.setFolder(folder);
+            // Returning All Updated contracts for that folder
+            GetContractsRequest getContractsRequest = new GetContractsRequest();
+            getContractsRequest.setFolderId(updateContractRequest.getFolderId());
+            return getAllContracts(getContractsRequest);
+        }catch (Exception e){
+            throw new Exception("Failed to update Contract");
         }
     }
 }
