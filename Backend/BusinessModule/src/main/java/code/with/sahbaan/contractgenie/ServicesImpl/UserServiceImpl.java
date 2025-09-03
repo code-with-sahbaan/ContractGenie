@@ -8,7 +8,9 @@ import code.with.sahbaan.contractgenie.RequestDTO.SendEmail;
 import code.with.sahbaan.contractgenie.RequestDTO.SignupRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.VerifyOtpRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
+import code.with.sahbaan.contractgenie.ResponseDTO.UploadFileResponse;
 import code.with.sahbaan.contractgenie.Services.AppConfigService;
+import code.with.sahbaan.contractgenie.Services.MediaService;
 import code.with.sahbaan.contractgenie.Services.UserService;
 import code.with.sahbaan.contractgenie.Utils.Constants;
 import jakarta.mail.internet.MimeMessage;
@@ -25,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -45,6 +48,8 @@ public class UserServiceImpl extends GenericServiceImpl<Users> implements UserDe
 
     @Value("${spring.application.name}")
     private String appName;
+    @Autowired
+    private MediaService mediaService;
 
     public UserServiceImpl() {
         super(Users.class);
@@ -134,6 +139,19 @@ public class UserServiceImpl extends GenericServiceImpl<Users> implements UserDe
     @Override
     public void updateUser(Users users) throws Exception {
         userRepository.save(users);
+    }
+
+    @Override
+    public BaseResponse<UploadFileResponse> uploadFile(MultipartFile file) throws Exception {
+        try{
+            String url = mediaService.uploadFile(file);
+            UploadFileResponse uploadFileResponse = new UploadFileResponse();
+            uploadFileResponse.setFileName(file.getOriginalFilename());
+            uploadFileResponse.setFileUrl(url);
+            return new BaseResponse<>("File Uploaded", uploadFileResponse);
+        }catch (Exception e){
+            throw new Exception("Failed to Upload File");
+        }
     }
 
     public void sendOTP(Users users) throws Exception {

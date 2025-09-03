@@ -1,6 +1,7 @@
 package code.with.sahbaan.contractgenie.Controllers.v1;
 
 import code.with.sahbaan.contractgenie.RequestDTO.AddFolderRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.DeleteFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.UpdateFolderRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
@@ -38,6 +39,12 @@ public class FolderController {
     public ResponseEntity<BaseResponse<List<GetFolderResponse>>> addFolder(@RequestBody AddFolderRequest addFolderRequest) throws Exception {
         log.info("Executing addFolder in FolderController");
         return new ResponseEntity<>(folderService.addFolder(addFolderRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("v1/deleteFolder")
+    public ResponseEntity<BaseResponse<List<GetFolderResponse>>> deleteFolder(@RequestBody DeleteFolderRequest deleteFolderRequest) throws Exception {
+        log.info("Executing deleteFolder in FolderController");
+        return new ResponseEntity<>(folderService.deleteFolder(deleteFolderRequest), HttpStatus.OK);
     }
 
 }

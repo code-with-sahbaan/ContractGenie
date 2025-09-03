@@ -6,31 +6,31 @@ import { TabList, TabsModule } from 'primeng/tabs';
 import { DrawerModule } from 'primeng/drawer';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
-import { AddFolder, FolderService, UpdateFolder } from '../../services/folder.service';
+import { AddFolder, DeleteFolder, FolderService, UpdateFolder } from '../../services/folder.service';
 import { UiService } from '../../services/ui.service';
 import { finalize } from 'rxjs';
 import { logout, MAX_FILE_SIZE } from '../../utils/common.util';
 import { ChatPrompt } from '../../services/ai.service';
 import { Select } from 'primeng/select';
 import { FileUpload, UploadEvent } from 'primeng/fileupload';
-import { ContractService, FolderList, GetContracts } from '../../services/contract.service';
+import { AddContract, ContractService, DeleteContract, FolderList, GetContracts, UpdateContract, UploadFileResponse } from '../../services/contract.service';
 import { SkeletonModule } from 'primeng/skeleton';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @Component({
   selector: 'app-contracts-workspace',
   imports: [
-    InputTextModule, 
-    ButtonModule, 
-    AccordionModule, 
-    TabsModule, 
-    DrawerModule, 
-    FormsModule, 
-    Dialog, 
-    ReactiveFormsModule, 
-    Select, 
-    FileUpload, 
-    SkeletonModule, 
+    InputTextModule,
+    ButtonModule,
+    AccordionModule,
+    TabsModule,
+    DrawerModule,
+    FormsModule,
+    Dialog,
+    ReactiveFormsModule,
+    Select,
+    FileUpload,
+    SkeletonModule,
     NgxExtendedPdfViewerModule
   ],
   templateUrl: './contracts-workspace.html',
@@ -63,14 +63,16 @@ export class ContractsWorkspace implements OnInit {
     });
 
     this.addContractForm = formBuilder.group({
-      contractFile: [null, [Validators.required]],
+      contractUrl: ['', [Validators.required]],
       contractName: ['', [Validators.required]],
+      contractFileName: ['', [Validators.required]],
       folderId: [0, [Validators.required]]
     });
 
     this.updateContractForm = formBuilder.group({
-      contractUrl: [null, [Validators.required]],
+      contractUrl: ['', [Validators.required]],
       contractName: ['', [Validators.required]],
+      contractFileName: ['', [Validators.required]],
       folderId: [0, [Validators.required]],
       contractId: [0, [Validators.required]]
     })
@@ -90,7 +92,12 @@ export class ContractsWorkspace implements OnInit {
   updatedFolderName: string = '';
   addContractModal: boolean = false;
   updateContractModal: boolean = false;
+  fileUploadLoader: boolean = false;
   loadingContracts: { [key: string]: boolean } = {};
+  uploadedFile: UploadFileResponse = {
+    fileName: '',
+    fileUrl: ''
+  }
 
   ngOnInit(): void {
     setTimeout(() => this.getFolders(), 0);
@@ -276,23 +283,17 @@ export class ContractsWorkspace implements OnInit {
     this.updateFolderModal = true;
   }
 
-  showUpdateContractModal(contract: any){
+  showUpdateContractModal(contract: any) {
     this.updateContractModal = true;
     // Setting up values
-    this.updateContractForm.get('contractId')?.setValue(contract.contractId);
-    this.updateContractForm.get('contractName')?.setValue(contract.contractName);
-    this.updateContractForm.get('contractUrl')?.setValue(contract.contractUrl);
-    this.updateContractForm.get('folderId')?.setValue(contract.folderId);
+    this.updateContractForm.setValue(contract);
   }
 
   addContract() {
     if (this.addContractForm.invalid) {
       return;
     }
-    const payload = new FormData();
-    payload.append("contractFile", this.addContractForm.get('contractFile')?.value);
-    payload.append("contractName", this.addContractForm.get('contractName')?.value);
-    payload.append("folderId", this.addContractForm.get('folderId')?.value);
+    const payload: AddContract = this.addContractForm.value;
     this.uiService.showSpinner();
     this.contractService
       .addContract(payload)
@@ -318,9 +319,40 @@ export class ContractsWorkspace implements OnInit {
       });
   }
 
+  updateContract() {
+    if (this.updateContractForm.invalid) {
+      return;
+    }
+    const payload: UpdateContract = this.updateContractForm.value;
+    this.uiService.showSpinner();
+    this.contractService
+      .updateContract(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uiService.showSuccess("Contract Updated Successfully");
+          const contracts = response.responseBody;
+          this.updateContractModal = false;
+          this.addContractsToFolder(this.updateContractForm.get('folderId')?.value, contracts);
+          this.addContractForm.reset();
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
+  }
+
   addContractsToFolder(folderId: number, contracts: any[]) {
     let index = 0;
     let folder = null;
+    this.activeFolderId = folderId;
     for (let i = 0; i < this.folders.length; i++) {
       if (this.folders[i].folderId == folderId) {
         index = i;
@@ -335,12 +367,94 @@ export class ContractsWorkspace implements OnInit {
 
   }
 
-  onUpload(event: any) {
+  deleteContract(contract: any) {
+    const payload: DeleteContract = {
+      folderId: contract.folderId,
+      contractId: contract.contractId
+    };
+    this.uiService.showSpinner();
+    this.contractService
+      .deleteContract(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uiService.showSuccess("Contract Deleted Successfully");
+          const contracts = response.responseBody;
+          this.addContractsToFolder(contract.folderId, contracts);
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
+  }
+
+  deleteFolder(event: MouseEvent, folder: any) {
+    event.stopPropagation();
+    const payload: DeleteFolder = {
+      folderId: folder.folderId,
+    };
+    this.uiService.showSpinner();
+    this.folderService
+      .deleteFolder(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uiService.showSuccess("Folder Deleted Successfully");
+          const folders = response.responseBody;
+          this.folders = [...folders];
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
+  }
+
+  onUpload(event: any, formGroup: FormGroup, fileName: string, fileUrl: string) {
     const file = event.files[0];
     if (file.size > MAX_FILE_SIZE) {
       this.uiService.showError("File Size too Large. Max File Size allowed: 1GB");
       return;
     }
-    this.addContractForm.get('contractFile')?.setValue(file);
+    const payload = new FormData();
+    payload.append("contractFile", file);
+    this.fileUploadLoader = true;
+    this.contractService
+      .uploadFile(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.fileUploadLoader = false;
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          // Showing success Toast
+          this.uploadedFile = response.responseBody;
+          formGroup.get(fileUrl)?.setValue(this.uploadedFile.fileUrl);
+          formGroup.get(fileName)?.setValue(this.uploadedFile.fileName);
+          this.uploadedFile = {
+            fileName: '',
+            fileUrl: ''
+          }
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
   }
 }

@@ -4,6 +4,7 @@ import code.with.sahbaan.contractgenie.RequestDTO.ForgotPassword;
 import code.with.sahbaan.contractgenie.RequestDTO.SignupRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.VerifyOtpRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
+import code.with.sahbaan.contractgenie.ResponseDTO.UploadFileResponse;
 import code.with.sahbaan.contractgenie.Services.FolderService;
 import code.with.sahbaan.contractgenie.Services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /*
  *A Controller that is accessible to every type of role
@@ -51,6 +53,10 @@ public class UserController {
     * ABOVE THIS LINE EVERY REQUEST IS NON_TOKENIZED. ALWAYS ADD NON_TOKENIZED REQUEST ABOVE THIS.
     * */
 
-
+    @PostMapping("v1/uploadFile")
+    public ResponseEntity<BaseResponse<UploadFileResponse>> uploadFile(@RequestParam("contractFile") MultipartFile file) throws Exception {
+        log.info("Executing uploadFile in UserController");
+        return new ResponseEntity<>(userService.uploadFile(file), HttpStatus.OK);
+    }
 
 }

@@ -1,6 +1,7 @@
 package code.with.sahbaan.contractgenie.Controllers.v1;
 
 import code.with.sahbaan.contractgenie.RequestDTO.AddContractRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.DeleteContractRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetContractsRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.UpdateContractRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
@@ -30,26 +31,21 @@ public class ContractController {
     }
 
     @PostMapping("v1/addContract")
-    public ResponseEntity<BaseResponse<List<GetContractsResponse>>> addContract(
-            @RequestParam("contractFile") MultipartFile file,
-            @RequestParam("contractName") String contractName,
-            @RequestParam("folderId") long folderId)
-            throws Exception {
+    public ResponseEntity<BaseResponse<List<GetContractsResponse>>> addContract(@RequestBody AddContractRequest addContractRequest) throws Exception {
 
         log.info("Executing addContract in ContractController");
-        return new ResponseEntity<>(contractService.addContract(
-                new  AddContractRequest(
-                        contractName,
-                        file,
-                        folderId
-                )
-        ), HttpStatus.OK);
+        return new ResponseEntity<>(contractService.addContract(addContractRequest), HttpStatus.OK);
     }
 
     @PostMapping("v1/updateContract")
     public ResponseEntity<BaseResponse<List<GetContractsResponse>>> updateContract(@RequestBody UpdateContractRequest updateContractRequest) throws Exception {
-
         log.info("Executing updateContract in ContractController");
         return new ResponseEntity<>(contractService.updateContract(updateContractRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("v1/deleteContract")
+    public ResponseEntity<BaseResponse<List<GetContractsResponse>>> deleteContract(@RequestBody DeleteContractRequest deleteContractRequest) throws Exception {
+        log.info("Executing deleteContract in ContractController");
+        return new ResponseEntity<>(contractService.deleteContract(deleteContractRequest), HttpStatus.OK);
     }
 }

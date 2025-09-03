@@ -14,7 +14,9 @@ public class AddContractRequest {
 
     private String contractName;
 
-    private MultipartFile file;
+    private String contractFileName;
 
     private long folderId;
+
+    private String contractUrl;
 }

@@ -12,6 +12,10 @@ export interface UpdateFolder{
     folderId: number
 }
 
+export interface DeleteFolder{
+  folderId: number
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,6 +29,10 @@ export class FolderService {
 
   updateFolder(payload: UpdateFolder): Observable<any> {
     return this.http.post('/folder/v1/updateFolder', payload).pipe();
+  }
+
+  deleteFolder(payload: DeleteFolder): Observable<any> {
+    return this.http.post('/folder/v1/deleteFolder', payload).pipe();
   }
 
   getFolders(): Observable<any> {

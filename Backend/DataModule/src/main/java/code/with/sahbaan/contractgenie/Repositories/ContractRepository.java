@@ -14,6 +14,7 @@ public interface ContractRepository extends JpaRepository<Contract,Long> {
             "c.contractId, " +
             "c.contractName, " +
             "c.contractUrl, " +
+            "c.contractFileName, " +
             "c.folder.folderId) " +
             "FROM Contract c " +
             "WHERE c.folder.folderId = :folderId")

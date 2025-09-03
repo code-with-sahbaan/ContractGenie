@@ -19,6 +19,31 @@ export interface FolderList{
     contracts: ContractList[]
 }
 
+export interface AddContract{
+  contractName: string,
+  contractUrl: string,
+  folderId: number,
+  contractFileName: string
+}
+
+export interface UpdateContract{
+  contractName: string,
+  contractUrl: string,
+  folderId: number,
+  contractFileName: string
+  contractId: number
+}
+
+export interface UploadFileResponse{
+  fileName: string,
+  fileUrl: string
+}
+
+export interface DeleteContract{
+  contractId: number,
+  folderId: number
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,12 +51,24 @@ export class ContractService {
 
   constructor(private http: HttpClient) { }
 
-  addContract(payload: FormData): Observable<any> {
+  addContract(payload: AddContract): Observable<any> {
     return this.http.post('/contract/v1/addContract', payload).pipe();
+  }
+
+  updateContract(payload: AddContract): Observable<any> {
+    return this.http.post('/contract/v1/updateContract', payload).pipe();
+  }
+
+  deleteContract(payload: DeleteContract): Observable<any> {
+    return this.http.post('/contract/v1/deleteContract', payload).pipe();
   }
 
   getContracts(payload: GetContracts): Observable<any> {
     return this.http.post('/contract/v1/getContracts', payload).pipe();
+  }
+
+  uploadFile(payload: FormData): Observable<any>{
+    return this.http.post('/user/v1/uploadFile', payload).pipe();
   }
 
 

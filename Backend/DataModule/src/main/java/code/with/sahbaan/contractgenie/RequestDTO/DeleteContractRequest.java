@@ -5,11 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateContractRequest {
+public class DeleteContractRequest {
 
     private long contractId;
-    private String contractName;
-    private String contractFileName;
-    private String contractUrl;
     private long folderId;
 }

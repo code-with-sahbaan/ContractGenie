@@ -21,6 +21,9 @@ public class Contract {
     @Column(name = "CONTRACT_URL")
     private String contractUrl;
 
+    @Column(name = "CONTRACT_FILE_NAME")
+    private String contractFileName;
+
     @Column(name = "CONTRACT_INSIGHTS" , length = 65535)
     private String contractInsights;
 

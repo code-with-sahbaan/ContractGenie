@@ -4,6 +4,7 @@ import code.with.sahbaan.contractgenie.Entities.Folder;
 import code.with.sahbaan.contractgenie.Entities.Users;
 import code.with.sahbaan.contractgenie.Repositories.FolderRepository;
 import code.with.sahbaan.contractgenie.RequestDTO.AddFolderRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.DeleteFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.GetFolderRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.UpdateFolderRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
@@ -68,6 +69,16 @@ public class FolderServiceImpl extends GenericServiceImpl<Folder> implements Fol
             return folderRepository.findById(folderId).get();
         } catch (Exception e) {
             throw new Exception("Failed to get folder");
+        }
+    }
+
+    @Override
+    public BaseResponse<List<GetFolderResponse>> deleteFolder(DeleteFolderRequest deleteFolderRequest) throws Exception {
+        try{
+            folderRepository.deleteById(deleteFolderRequest.getFolderId());
+            return getAllFolders();
+        }catch (Exception e){
+            throw new Exception("Failed to delete folder");
         }
     }
 }
