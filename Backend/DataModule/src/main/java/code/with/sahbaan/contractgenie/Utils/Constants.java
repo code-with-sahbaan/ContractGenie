@@ -6,6 +6,9 @@ public class Constants {
 
     public static final String FORGOT_PASSWORD_OTP_TEMPLATE_NAME = "FORGOT_PASSWORD_OTP_TEMPLATE_NAME";
 
+    public static final String CHAT_USER_ROLE = "user";
+
+    public static final String CHAT_ASSISTANT_ROLE = "assistant";
 
     public static final String EMAIL_OTP_TEMPLATE = "<!DOCTYPE html>\n" +
             "<html lang=\"en\">\n" +

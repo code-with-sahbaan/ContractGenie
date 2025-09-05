@@ -1,11 +1,9 @@
 package code.with.sahbaan.contractgenie.Controllers.v1;
 
-import code.with.sahbaan.contractgenie.RequestDTO.AddContractRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.DeleteContractRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.GetContractsRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.UpdateContractRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.*;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
 import code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse;
+import code.with.sahbaan.contractgenie.Services.AiService;
 import code.with.sahbaan.contractgenie.Services.ContractService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,9 @@ public class ContractController {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private AiService aiService;
 
     @PostMapping("v1/getContracts")
     public ResponseEntity<BaseResponse<List<GetContractsResponse>>> getContracts(@RequestBody GetContractsRequest getContractsRequest) throws Exception {
@@ -47,5 +48,11 @@ public class ContractController {
     public ResponseEntity<BaseResponse<List<GetContractsResponse>>> deleteContract(@RequestBody DeleteContractRequest deleteContractRequest) throws Exception {
         log.info("Executing deleteContract in ContractController");
         return new ResponseEntity<>(contractService.deleteContract(deleteContractRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("v1/getAiAnswer")
+    public ResponseEntity<BaseResponse<String>> getAiAnswer(@RequestBody GetAiAnswerRequest getAiAnswerRequest) throws Exception {
+        log.info("Executing getAiAnswer in ContractController");
+        return new ResponseEntity<>(aiService.getAiAnswer(getAiAnswerRequest), HttpStatus.OK);
     }
 }
