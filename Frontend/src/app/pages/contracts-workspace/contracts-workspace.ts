@@ -10,7 +10,7 @@ import { AddFolder, DeleteFolder, FolderService, UpdateFolder } from '../../serv
 import { UiService } from '../../services/ui.service';
 import { finalize } from 'rxjs';
 import { logout, MAX_FILE_SIZE } from '../../utils/common.util';
-import { ChatPrompt } from '../../services/ai.service';
+import { AiService, AskAI, ChatPrompt } from '../../services/ai.service';
 import { Select } from 'primeng/select';
 import { FileUpload, UploadEvent } from 'primeng/fileupload';
 import { AddContract, ContractService, DeleteContract, FolderList, GetContracts, UpdateContract, UploadFileResponse } from '../../services/contract.service';
@@ -48,7 +48,9 @@ export class ContractsWorkspace implements OnInit {
     public folderService: FolderService,
     public contractService: ContractService,
     public uiService: UiService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public aiService: AiService
+  ) {
     this.addFolderForm = formBuilder.group({
       folderName: ['', [Validators.required]],
     });
@@ -176,10 +178,35 @@ export class ContractsWorkspace implements OnInit {
     if (this.aiChatForm.invalid) {
       return;
     }
-    const temp = this.chatMessages;
-    temp.push(this.aiChatForm.value);
-    this.chatMessages = [...temp];
-    this.aiChatForm.reset();
+    const payload: AskAI = {
+      userPrompt: this.aiChatForm.get('userMessage')?.value
+    }
+    this.
+      aiService.getAiAnswer(payload)
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+          this.aiChatForm.reset();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          const userMessage = this.aiChatForm.get('userMessage')?.value;
+          const aiPrompt = response.responseBody;
+          const finalPrompt: ChatPrompt = { 
+            userMessage: userMessage,
+            aiMessage: aiPrompt
+          }
+          const temp = this.chatMessages;
+          temp.push(finalPrompt);
+          this.chatMessages = [...temp];
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
   }
 
   getContractInsights() {
