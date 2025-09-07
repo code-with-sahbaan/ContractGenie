@@ -16,6 +16,8 @@ import { FileUpload, UploadEvent } from 'primeng/fileupload';
 import { AddContract, ContractService, DeleteContract, FolderList, GetContracts, UpdateContract, UploadFileResponse } from '../../services/contract.service';
 import { SkeletonModule } from 'primeng/skeleton';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { MarkdownComponent } from 'ngx-markdown';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-contracts-workspace',
@@ -31,7 +33,9 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
     Select,
     FileUpload,
     SkeletonModule,
-    NgxExtendedPdfViewerModule
+    NgxExtendedPdfViewerModule,
+    MarkdownComponent,
+    CommonModule
   ],
   templateUrl: './contracts-workspace.html',
   styleUrl: './contracts-workspace.css'
@@ -95,6 +99,7 @@ export class ContractsWorkspace implements OnInit {
   addContractModal: boolean = false;
   updateContractModal: boolean = false;
   fileUploadLoader: boolean = false;
+  chatLoader: boolean = false;
   loadingContracts: { [key: string]: boolean } = {};
   uploadedFile: UploadFileResponse = {
     fileName: '',
@@ -102,7 +107,12 @@ export class ContractsWorkspace implements OnInit {
   }
 
   ngOnInit(): void {
-    setTimeout(() => this.getFolders(), 0);
+    setTimeout(() => this.initAPICalls(), 0);
+  }
+
+  initAPICalls() {
+    this.getFolders();
+    this.getChatMessages();
   }
 
   @HostListener('window:resize')
@@ -110,6 +120,29 @@ export class ContractsWorkspace implements OnInit {
     this.checkScreenSize();
   }
   folders: FolderList[] = [];
+
+  getChatMessages() {
+    this.uiService.showSpinner();
+    this.
+      aiService.getChatMessages()
+      .pipe(
+        finalize(() => {
+          // Hiding Loader after API call completion
+          this.uiService.hideSpinner();
+          setTimeout(() => this.scrollToBottom(), 0 )
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          const list = response.responseBody;
+          this.chatMessages = [...list];
+        },
+        error: (error) => {
+          // Showing error toast
+          this.uiService.showError(error.error.responseMessage);
+        },
+      });
+  }
 
   activateContract(contract: any) {
     this.selectedContracts.set(contract.contractId, contract);
@@ -163,6 +196,8 @@ export class ContractsWorkspace implements OnInit {
       const contract = this.selectedContracts.get(Number(index));
       this.activeFolderId = contract.folderId;
       this.activeContractUrl = contract.contractUrl;
+    }else{
+      setTimeout(() => this.scrollToBottom(),0)
     }
   }
 
@@ -181,23 +216,19 @@ export class ContractsWorkspace implements OnInit {
     const payload: AskAI = {
       userPrompt: this.aiChatForm.get('userMessage')?.value
     }
+    this.chatLoader = true;
     this.
       aiService.getAiAnswer(payload)
       .pipe(
         finalize(() => {
           // Hiding Loader after API call completion
-          this.uiService.hideSpinner();
-          this.aiChatForm.reset();
+          this.chatLoader = false;
+          setTimeout(() => this.scrollToBottom(), 0 );
         })
       )
       .subscribe({
         next: (response) => {
-          const userMessage = this.aiChatForm.get('userMessage')?.value;
-          const aiPrompt = response.responseBody;
-          const finalPrompt: ChatPrompt = { 
-            userMessage: userMessage,
-            aiMessage: aiPrompt
-          }
+          const finalPrompt: ChatPrompt = response.responseBody;
           const temp = this.chatMessages;
           temp.push(finalPrompt);
           this.chatMessages = [...temp];
@@ -207,6 +238,15 @@ export class ContractsWorkspace implements OnInit {
           this.uiService.showError(error.error.responseMessage);
         },
       });
+
+    this.aiChatForm.reset();
+  }
+
+  scrollToBottom() {
+    let ele = document.getElementById("chatWindow");
+    if (ele) {
+      ele.scrollTop = ele?.scrollHeight;
+    }
   }
 
   getContractInsights() {

@@ -17,8 +17,9 @@
                         <div class="grid grid-nogutter align-items-center gap-3">
                             {{fld.folderName}}
                             <p-button class="w-1" icon="pi pi-pencil" [text]="true" [rounded]="true"
-                                (click)="showUpdateFolderModal($event, fld)"/>
-                            <p-button class="w-1" severity="danger" icon="pi pi-trash" (click)="deleteFolder($event, fld)" [text]="true" [rounded]="true" />
+                                (click)="showUpdateFolderModal($event, fld)" />
+                            <p-button class="w-1" severity="danger" icon="pi pi-trash"
+                                (click)="deleteFolder($event, fld)" [text]="true" [rounded]="true" />
                         </div>
                     </p-accordion-header>
                     <p-accordion-content>
@@ -135,25 +136,31 @@
 
                 @if (activeContractId == 0) {
                 <p-tabpanel value="0">
-                    <div class="h-full flex flex-column justify-content-end w-full">
+                    <div class="h-full flex flex-column w-full {{chatMessages.length > 0 ? 'justify-content-between': 'justify-content-end'}}">
                         @if (chatMessages.length > 0) {
-                        <div style="height: 90%;" class="flex flex-column gap-4">
+                        <div id="chatWindow" style="height: 90%;" class="flex flex-column gap-4 pb-8 overflow-auto">
                             @for (item of chatMessages; track $index) {
-                            <div class="p-4 border-1 border-dashed border-round-xl">
-                                <p>{{item.userMessage}}</p>
-                                <br>
-                                <p>{{item.aiMessage}}</p>
+                            <div class="border-1 border-dashed border-round-xl">
+                                <p class="p-4">{{item.userMessage}}</p>
+                                <markdown class="p-4 bg-primary grid grid-nogutter w-full" [data]="item.aiMessage"></markdown>
+                            </div>
+                            }
+                            @if (chatLoader) {
+                            <div>
+                                <p-skeleton height="4rem" class="mb-2" />
+                                <p-skeleton height="4rem" class="mb-2" />
+                                <p-skeleton height="4rem" class="mb-2" />
                             </div>
                             }
                         </div>
                         }@else {
-                        <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
+                            <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
                         }
 
                         <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">
                             <input pInputText maxlength="255" id="userMessage" aria-describedby="userMessage-help"
                                 formControlName="userMessage" placeholder="Ask Anything" />
-                            <p-button [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
+                            <p-button type="submit" [style]="{'height':'100%'}" icon="pi pi-arrow-up" [rounded]="true"
                                 [disabled]="aiChatForm.invalid" />
                         </form>
                     </div>
@@ -231,7 +238,7 @@
     <!-- Update Contract Dialog -->
     <p-dialog [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" header="Update Contract" [modal]="true"
         (onHide)="updateContractForm.reset()" [(visible)]="updateContractModal" [style]="{ width: '50rem' }">
-         @if (fileUploadLoader) {
+        @if (fileUploadLoader) {
         <div>
             <p-skeleton height="4rem" class="mb-2" />
             <p-skeleton height="4rem" class="mb-2" />
@@ -247,7 +254,7 @@
                 (onSelect)="onUpload($event, updateContractForm, 'contractFileName', 'contractUrl')"
                 chooseLabel="Replace File" />
             <p-button type="submit" [rounded]="true" [disabled]="false" label="Update Contract"
-                [disabled]="updateContractForm.invalid"/>
+                [disabled]="updateContractForm.invalid" />
         </form>}
     </p-dialog>
 

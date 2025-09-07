@@ -30,8 +30,10 @@ public class ContractTools {
     @Tool(name = "getTheGeneralAnswerOfUserPromptRelatedToContract", description = "Get the answer for any user prompt related to contracts details")
     public String getTheGeneralAnswerOfUserPromptRelatedToContract(@ToolParam(description = "Any User Prompt related to contract details") String userPrompt) {
         Users users = userService.getCurrentUser();
+        String fe = "userId == '" + users.getUserId() + "'";
         List<Document> documents = vectorStore.similaritySearch(SearchRequest.
                 builder().
+                filterExpression(fe).
                 query(userPrompt).topK(10).build());
         if (documents.isEmpty()) {
             return "I don't have any knowledge of your asked query. Try sending more details";

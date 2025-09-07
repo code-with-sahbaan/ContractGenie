@@ -2,6 +2,7 @@ package code.with.sahbaan.contractgenie.Controllers.v1;
 
 import code.with.sahbaan.contractgenie.RequestDTO.*;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
+import code.with.sahbaan.contractgenie.ResponseDTO.GetAiAnswerResponse;
 import code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse;
 import code.with.sahbaan.contractgenie.Services.AiService;
 import code.with.sahbaan.contractgenie.Services.ContractService;
@@ -51,8 +52,14 @@ public class ContractController {
     }
 
     @PostMapping("v1/getAiAnswer")
-    public ResponseEntity<BaseResponse<String>> getAiAnswer(@RequestBody GetAiAnswerRequest getAiAnswerRequest) throws Exception {
+    public ResponseEntity<BaseResponse<GetAiAnswerResponse>> getAiAnswer(@RequestBody GetAiAnswerRequest getAiAnswerRequest) throws Exception {
         log.info("Executing getAiAnswer in ContractController");
         return new ResponseEntity<>(aiService.getAiAnswer(getAiAnswerRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("v1/getChatMessages")
+    public ResponseEntity<BaseResponse<List<GetAiAnswerResponse>>> getChatMessages() throws Exception {
+        log.info("Executing getChatMessages in ContractController");
+        return new ResponseEntity<>(aiService.getChatMessages(), HttpStatus.OK);
     }
 }

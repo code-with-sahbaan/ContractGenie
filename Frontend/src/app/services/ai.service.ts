@@ -23,4 +23,8 @@ export class AiService {
   getAiAnswer(payload: AskAI): Observable<any> {
     return this.http.post('/contract/v1/getAiAnswer', payload).pipe();
   }
+
+  getChatMessages(): Observable<any> {
+    return this.http.get('/contract/v1/getChatMessages').pipe();
+  }
 }

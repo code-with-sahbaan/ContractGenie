@@ -7,12 +7,14 @@ import { MyPreset } from './theme/preset';
 import { MessageService } from 'primeng/api';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpConfigInterceptor } from './interceptors/http.interceptor';
+import { provideMarkdown } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideMarkdown(),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
