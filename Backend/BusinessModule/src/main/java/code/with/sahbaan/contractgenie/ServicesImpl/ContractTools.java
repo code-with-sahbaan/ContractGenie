@@ -32,7 +32,7 @@ public class ContractTools {
         Users users = userService.getCurrentUser();
         List<Document> documents = vectorStore.similaritySearch(SearchRequest.
                 builder().
-                query(userPrompt).topK(10).filterExpression("userId == " + users.getUserId()).build());
+                query(userPrompt).topK(10).build());
         if (documents.isEmpty()) {
             return "I don't have any knowledge of your asked query. Try sending more details";
         }
