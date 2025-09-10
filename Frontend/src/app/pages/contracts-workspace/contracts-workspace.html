@@ -3,6 +3,10 @@
     <!-- Folders -->
     @if (isDesktop) {
     <section class="col-3 h-full p-3 flex flex-column gap-4">
+        <figure>
+            <img src="https://res.cloudinary.com/dqft6k71v/image/upload/v1756306794/Logo-Original_l4cyxt.png" alt="Logo"
+                width="150">
+        </figure>
         <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
         <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
         <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
@@ -60,6 +64,10 @@
         [modal]="!isDesktop" position="left" [style]="{ width: '80%' }" [blockScroll]="!isDesktop">
         <ng-template #headless>
             <section class="w-full h-full p-3 flex flex-column gap-4">
+                <figure>
+                    <img src="https://res.cloudinary.com/dqft6k71v/image/upload/v1756306794/Logo-Original_l4cyxt.png"
+                        alt="Logo" width="150">
+                </figure>
                 <p-button class="w-full" label="Add Folder" icon="pi pi-folder" (click)="addFolderModal = true;" />
                 <p-button class="w-full" label="Add Contract" icon="pi pi-file" (click)="addContractModal = true;" />
                 <p-button class="w-full" label="Log out" severity="danger" icon="pi pi-sign-out" (click)="signOut()" />
@@ -136,13 +144,15 @@
 
                 @if (activeContractId == 0) {
                 <p-tabpanel value="0">
-                    <div class="h-full flex flex-column w-full {{chatMessages.length > 0 ? 'justify-content-between': 'justify-content-end'}}">
+                    <div
+                        class="h-full flex flex-column w-full {{chatMessages.length > 0 ? 'justify-content-between': 'justify-content-end'}}">
                         @if (chatMessages.length > 0) {
                         <div id="chatWindow" style="height: 90%;" class="flex flex-column gap-4 pb-8 overflow-auto">
                             @for (item of chatMessages; track $index) {
                             <div class="border-1 border-dashed border-round-xl">
                                 <p class="p-4">{{item.userMessage}}</p>
-                                <markdown class="p-4 bg-primary grid grid-nogutter w-full" [data]="item.aiMessage"></markdown>
+                                <markdown class="p-4 bg-primary grid grid-nogutter w-full" [data]="item.aiMessage">
+                                </markdown>
                             </div>
                             }
                             @if (chatLoader) {
@@ -154,7 +164,7 @@
                             }
                         </div>
                         }@else {
-                            <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
+                        <h1 class="text-2xl font-bold text-center mb-4">What you are looking for ?</h1>
                         }
 
                         <form [formGroup]="aiChatForm" class="flex gap-2" (ngSubmit)="submitQuery()">

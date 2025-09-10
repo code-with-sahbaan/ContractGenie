@@ -15,6 +15,7 @@ import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,8 @@ public class AiServiceImpl implements AiService {
 
     private final VectorStore vectorStore;
 
-    public static final int MESSAGE_LIMIT = 10;
+    @Value("${ai.message.limit}")
+    public int MESSAGE_LIMIT;
 
     @Autowired
     private ChatMessageRepository chatMessageRepository;
@@ -60,7 +62,13 @@ public class AiServiceImpl implements AiService {
                 messages.add(AiReply);
             }
 
-            String response = chatClient.prompt().user(getAiAnswerRequest.getUserPrompt()).messages(messages).system("You must always call the provided tools instead of answering directly.").call().content();
+            String response = chatClient.
+                    prompt().
+                    user(getAiAnswerRequest.getUserPrompt()).
+                    messages(messages).
+                    system("You must always call the provided tools instead of answering directly.").
+                    call().
+                    content();
 
             // Saving reply to DB
             ChatMessages chatMessages = new ChatMessages();
