@@ -40,12 +40,20 @@ public class DataBootstrapping implements CommandLineRunner {
             appConfigRepository.save(appConfigs);
         }
 
+        log.info("*** INSERTING EMBEDDING TEMPLATE ***");
+        if (appConfigRepository.findByName(Constants.EMBEDDING_SUCCESSFULLY_CREATED_NAME) == null){
+            AppConfigs appConfigs = new AppConfigs();
+            appConfigs.setName(Constants.EMBEDDING_SUCCESSFULLY_CREATED_NAME);
+            appConfigs.setValue(Constants.EMBEDDING_SUCCESSFULLY_CREATED_TEMPLATE);
+            appConfigRepository.save(appConfigs);
+        }
+
         log.info("*** INSERTING SAMPLE USER ***");
         if (userRepository.findByEmail("email2@gmail.com").isEmpty()){
             Users users2 = new Users();
             users2.setFullName("Sahbaan Alam");
             users2.setIsActive(true);
-            users2.setEmail("email2@@gmail.com");
+            users2.setEmail("email2@gmail.com");
             users2.setPassword(new BCryptPasswordEncoder().encode("123456789"));
             userRepository.save(users2);
         }

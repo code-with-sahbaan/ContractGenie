@@ -193,7 +193,8 @@ public class UserServiceImpl extends GenericServiceImpl<Users> implements UserDe
         return (10000 + r.nextInt(20000));
     }
 
-    private void initiateEmail(SendEmail sendEmail) throws Exception {
+    @Override
+    public void initiateEmail(SendEmail sendEmail) throws Exception {
         try{
             /* Getting Template FROM DB*/
             AppConfigs appConfigs = appConfigService.getAppConfigsByName(sendEmail.getEmailTemplateName());

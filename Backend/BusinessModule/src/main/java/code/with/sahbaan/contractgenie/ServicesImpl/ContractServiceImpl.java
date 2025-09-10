@@ -4,16 +4,14 @@ import code.with.sahbaan.contractgenie.Entities.Contract;
 import code.with.sahbaan.contractgenie.Entities.Folder;
 import code.with.sahbaan.contractgenie.Entities.Users;
 import code.with.sahbaan.contractgenie.Repositories.ContractRepository;
-import code.with.sahbaan.contractgenie.RequestDTO.AddContractRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.DeleteContractRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.GetContractsRequest;
-import code.with.sahbaan.contractgenie.RequestDTO.UpdateContractRequest;
+import code.with.sahbaan.contractgenie.RequestDTO.*;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
 import code.with.sahbaan.contractgenie.ResponseDTO.GetContractsResponse;
 import code.with.sahbaan.contractgenie.Services.ContractService;
 import code.with.sahbaan.contractgenie.Services.FolderService;
 import code.with.sahbaan.contractgenie.Services.MediaService;
 import code.with.sahbaan.contractgenie.Services.UserService;
+import code.with.sahbaan.contractgenie.Utils.Constants;
 import jakarta.transaction.Transactional;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessRead;
@@ -21,8 +19,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@EnableAspectJAutoProxy(exposeProxy = true)
 public class ContractServiceImpl extends GenericServiceImpl<Contract> implements ContractService {
 
     @Autowired
@@ -78,7 +79,7 @@ public class ContractServiceImpl extends GenericServiceImpl<Contract> implements
             contract.setFolder(folder);
             contractRepository.save(contract);
             // Creating Embeddings
-            createEmbeddingFromDoc(contract.getContractUrl(), userService.getCurrentUser());
+            ((ContractService) AopContext.currentProxy()).createEmbeddingFromDoc(contract.getContractUrl(), contract.getContractFileName(), userService.getCurrentUser());
             // Returning All Updated contracts for that folder
             GetContractsRequest getContractsRequest = new GetContractsRequest();
             getContractsRequest.setFolderId(addContractRequest.getFolderId());
@@ -90,7 +91,7 @@ public class ContractServiceImpl extends GenericServiceImpl<Contract> implements
 
     @Async
     @Override
-    public void createEmbeddingFromDoc(String docUrl, Users users) throws Exception{
+    public void createEmbeddingFromDoc(String docUrl, String docName, Users users) throws Exception{
         try {
             String filePath = "downloaded_document.pdf";
             File file = new File(filePath);
@@ -124,6 +125,17 @@ public class ContractServiceImpl extends GenericServiceImpl<Contract> implements
                     Files.deleteIfExists(file.toPath());
                 }
                 vectorStore.add(documents);
+
+                // Generating Email
+                SendEmail sendEmail =  new SendEmail();
+                sendEmail.setToEmail(users.getEmail());
+                sendEmail.setSubject("Contract Embeddings Created Successfully");
+                sendEmail.setEmailTemplateName(Constants.EMBEDDING_SUCCESSFULLY_CREATED_NAME);
+                Map<String,String> emailContent = new HashMap<>();
+                emailContent.put("documentName", docName);
+                emailContent.put("name",users.getFullName());
+                sendEmail.setContent(emailContent);
+                userService.initiateEmail(sendEmail);
             }
 
         } catch (Exception e) {

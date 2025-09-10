@@ -20,5 +20,5 @@ public interface ContractService {
 
     BaseResponse<List<GetContractsResponse>> deleteContract(DeleteContractRequest deleteContractRequest) throws Exception;
 
-    void createEmbeddingFromDoc(String docUrl, Users users) throws Exception;
+    void createEmbeddingFromDoc(String docUrl, String docName, Users users) throws Exception;
 }

@@ -3,6 +3,7 @@ package code.with.sahbaan.contractgenie.Services;
 
 import code.with.sahbaan.contractgenie.Entities.Users;
 import code.with.sahbaan.contractgenie.RequestDTO.ForgotPassword;
+import code.with.sahbaan.contractgenie.RequestDTO.SendEmail;
 import code.with.sahbaan.contractgenie.RequestDTO.SignupRequest;
 import code.with.sahbaan.contractgenie.RequestDTO.VerifyOtpRequest;
 import code.with.sahbaan.contractgenie.ResponseDTO.BaseResponse;
@@ -26,5 +27,7 @@ public interface UserService {
     void updateUser(Users users) throws Exception;
 
     BaseResponse<UploadFileResponse> uploadFile(MultipartFile file) throws Exception;
+
+    public void initiateEmail(SendEmail sendEmail) throws Exception;
 
 }

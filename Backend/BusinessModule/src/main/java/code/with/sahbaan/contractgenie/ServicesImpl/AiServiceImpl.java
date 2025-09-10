@@ -60,7 +60,7 @@ public class AiServiceImpl implements AiService {
                 messages.add(AiReply);
             }
 
-            String response = chatClient.prompt(getAiAnswerRequest.getUserPrompt()).messages(messages).system("You must always call the provided tools instead of answering directly.").call().content();
+            String response = chatClient.prompt().user(getAiAnswerRequest.getUserPrompt()).messages(messages).system("You must always call the provided tools instead of answering directly.").call().content();
 
             // Saving reply to DB
             ChatMessages chatMessages = new ChatMessages();

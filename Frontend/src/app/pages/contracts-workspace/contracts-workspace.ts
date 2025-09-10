@@ -373,7 +373,7 @@ export class ContractsWorkspace implements OnInit {
       .subscribe({
         next: (response) => {
           // Showing success Toast
-          this.uiService.showSuccess("Contract Added Successfully");
+          this.uiService.showSuccess("Contract Added Successfully. You will be emailed when your embeddings will be created and trained by LLM.");
           const contracts = response.responseBody;
           this.addContractModal = false;
           this.addContractsToFolder(this.addContractForm.get('folderId')?.value, contracts);
