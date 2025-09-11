@@ -18,6 +18,8 @@ import org.apache.pdfbox.io.RandomAccessRead;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.transformer.splitter.TextSplitter;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.BeanUtils;
@@ -120,11 +122,15 @@ public class ContractServiceImpl extends GenericServiceImpl<Contract> implements
                              line -> new Document(line, metadata)
                         ).toList();
 
+                // Creating Tokens
+                TextSplitter textSplitter = new TokenTextSplitter();
+                List<Document> splitDocuments = textSplitter.apply(documents);
+
                 // deleting file
                 if (!file.delete()){
                     Files.deleteIfExists(file.toPath());
                 }
-                vectorStore.add(documents);
+                vectorStore.add(splitDocuments);
 
                 // Generating Email
                 SendEmail sendEmail =  new SendEmail();

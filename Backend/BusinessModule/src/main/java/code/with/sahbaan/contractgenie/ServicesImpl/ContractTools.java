@@ -43,8 +43,8 @@ public class ContractTools {
         this.chatClient = chatClient.build();
     }
 
-    @Tool(name = "getTheGeneralAnswerOfUserPromptRelatedToAnyTypeOfDocs", description = "Get the answer for any user prompt related to any type of doc like " + Constants.TYPES_OF_DOCS)
-    public String getTheGeneralAnswerOfUserPromptRelatedToContract(@ToolParam(description = "Any User Prompt related to contract details " + Constants.TYPES_OF_DOCS) String userPrompt) {
+    @Tool(name = "getTheAnswerRelatedToAnyTypeOfDocs", description = "Get the answer for any user prompt related to any type of doc like " + Constants.TYPES_OF_DOCS)
+    public String getTheAnswerRelatedToAnyTypeOfDocs(@ToolParam(description = "Any User Prompt related to contract details " + Constants.TYPES_OF_DOCS) String userPrompt) {
         Users users = userService.getCurrentUser();
         String fe = "userId == '" + users.getUserId() + "'";
         List<Document> documents = vectorStore.similaritySearch(
@@ -64,8 +64,8 @@ public class ContractTools {
                 .collect(Collectors.joining("\n"));
     }
 
-    @Tool(name = "getTheGeneralAnswerOfUserPromptNotRelatedToAnyTypeOfDocs", description = "Get the answer for any user prompt not related to any type of document like not related to " + Constants.TYPES_OF_DOCS + " but a general query")
-    public String getTheGeneralAnswerOfUserPrompt(@ToolParam(description = "Any User Prompt not related to " + Constants.TYPES_OF_DOCS) String userPrompt) {
+    @Tool(name = "getTheAnswerOfGeneralQueries", description = "get The Answer Of General Queries not related to " + Constants.TYPES_OF_DOCS + " but a general query")
+    public String getTheAnswerOfGeneralQueries(@ToolParam(description = "Any User Prompt not related to " + Constants.TYPES_OF_DOCS) String userPrompt) {
         Users users = userService.getCurrentUser();
 
         // fetching last 10 user and assistant messages
