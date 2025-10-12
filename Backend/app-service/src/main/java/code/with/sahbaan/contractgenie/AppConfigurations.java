@@ -30,7 +30,7 @@ public class AppConfigurations {
 
 
     @Bean
-    public JavaMailSender mailSender(){
+    public JavaMailSender mailSender() {
         JavaMailSenderImpl mailSender1 = new JavaMailSenderImpl();
         mailSender1.setHost("smtp.gmail.com");
         mailSender1.setPort(587);
@@ -48,7 +48,7 @@ public class AppConfigurations {
     }
 
     @Bean
-    Cloudinary cloudinary(){
+    Cloudinary cloudinary() {
         return new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", cloudName,
                 "api_key", apiKey,
